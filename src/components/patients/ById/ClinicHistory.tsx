@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/accordion"
 import { AiOutlineFilePdf } from "react-icons/ai";
 import { Button } from "@/components/ui/button"
-import { API_URL } from '@/api/config';
+import { usePost } from '@/hooks';
 
 
 
@@ -19,7 +19,7 @@ interface ClinicHistoryProps {
 }
 
 export const ClinicHistory = ({ clinic, idPatient, updatePatient }: ClinicHistoryProps) => {
-
+  const { execute, loading } = usePost()
   const formateDate = (format?: string) => {
     if (!format) return 'Sin fecha'
 
@@ -31,6 +31,30 @@ export const ClinicHistory = ({ clinic, idPatient, updatePatient }: ClinicHistor
     const min = String(date.getUTCMinutes()).padStart(2, "0");
 
     return `${dd}/${mm}/${yyyy} ${hh}:${min}`
+  }
+
+  const pullRecipe = (id: number) => {
+    execute({
+      url: `/patient/pdf`,
+      body: {
+        id_clinic: id,
+      }
+    }).then((res: any) => {
+      if (res.status === 200) {
+        const byteCharacters = atob(res.data)
+        const byteNumbers = new Uint8Array(byteCharacters.length)
+
+        for (let i = 0; i < byteCharacters.length; i++) {
+          byteNumbers[i] = byteCharacters.charCodeAt(i)
+        }
+
+        const blob = new Blob([byteNumbers], { type: "application/pdf" })
+        const blobURL = URL.createObjectURL(blob)
+
+        // Abrir en una nueva pestaña
+        window.open(blobURL, "_blank")
+      }
+    })
   }
 
   const print = () => {
@@ -48,11 +72,11 @@ export const ClinicHistory = ({ clinic, idPatient, updatePatient }: ClinicHistor
             <article className='flex flex-col border border-gray-400 rounded-md'>
               <div className='flex w-full'>
                 <Button onClick={() => {
-                  window.open(`${API_URL}/patient/pdf/${idPatient}?id_clinic=${c.id}`, '_blank')
-
-                }} className='w-full'>
+                  // window.open(`${API_URL}/patient/pdf/${idPatient}?id_clinic=${c.id}`, '_blank')
+                  pullRecipe(c.id)
+                }} className='w-full' disabled={loading}>
                   <AiOutlineFilePdf className='text-2xl' />
-                  <span>Descargar PDF</span>
+                  <span>Generar receta medica</span>
                 </Button>
               </div>
 

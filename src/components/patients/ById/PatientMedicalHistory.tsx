@@ -8,12 +8,15 @@ import { Badge } from "@/components/ui/badge"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { utils } from "@/utils"
+import { usePost } from '@/hooks';
+
 interface PatientMedicalHistoryProps {
   patient: PatientType | null
   onBack: () => void
 }
 
 export const PatientMedicalHistory = ({ patient, onBack }: PatientMedicalHistoryProps) => {
+  const { execute, loading } = usePost()
 
   const printHistory = () => {
     if (patient?.clinic_histories?.length === 0) {
@@ -22,6 +25,30 @@ export const PatientMedicalHistory = ({ patient, onBack }: PatientMedicalHistory
           <p>El paciente aún no tiene un historial medico</p>
         </div>
       )
+    }
+
+    const pullRecipe = (id: number) => {
+      execute({
+        url: `/patient/pdf`,
+        body: {
+          id_clinic: id,
+        }
+      }).then((res: any) => {
+        if (res.status === 200) {
+          const byteCharacters = atob(res.data)
+          const byteNumbers = new Uint8Array(byteCharacters.length)
+
+          for (let i = 0; i < byteCharacters.length; i++) {
+            byteNumbers[i] = byteCharacters.charCodeAt(i)
+          }
+
+          const blob = new Blob([byteNumbers], { type: "application/pdf" })
+          const blobURL = URL.createObjectURL(blob)
+
+          // Abrir en una nueva pestaña
+          window.open(blobURL, "_blank")
+        }
+      })
     }
 
     return patient?.clinic_histories?.map((history, index) => {
@@ -159,7 +186,7 @@ export const PatientMedicalHistory = ({ patient, onBack }: PatientMedicalHistory
             </Accordion>
 
             <div className="flex justify-end mt-2">
-              <Button variant="ghost" size="sm">
+              <Button variant="ghost" size="sm" onClick={() => pullRecipe(history.id)} disabled={loading}>
                 <FileText className="h-4 w-4 mr-1" />
                 Ver receta medica
               </Button>
