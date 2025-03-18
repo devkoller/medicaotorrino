@@ -1,3 +1,6 @@
+import { UserType } from "./User"
+import { MedicationsType } from "./Medications"
+
 export interface PatientType {
 	id: number
 	name: string
@@ -6,11 +9,10 @@ export interface PatientType {
 	email?: string
 	phone: string
 	birthdate?: string
-	mc?: string
 	workIn?: string
 	curp?: string
 	rfc?: string
-	gender?: string
+	gender?: number
 	bloodType?: string
 	active?: boolean
 	patient_address: PatientAddressType | null
@@ -47,8 +49,10 @@ export interface PatientClinicType {
 	face_description?: string
 	evolution?: string
 	idx?: string
-	plan?: string
 	updatedAt?: string
+	mc?: string
+	user?: UserType
+	medical_recipe?: MedicalRecipeType
 }
 
 export interface PatientFamilyHistoryType {
@@ -84,4 +88,26 @@ export interface PatientPathologicalHistoryType {
 	has?: boolean
 	other_diseases?: boolean
 	other_diseases_description?: string
+}
+
+export interface MedicalRecipeDetailsType {
+	id: number
+	dosage?: string
+	duration: string
+	frequency: string
+	id_medical_recipe: number
+	id_medication: number
+	medication: MedicationsType
+	special_instructions?: string
+}
+
+export interface MedicalRecipeType {
+	id: number
+	idPatient: number
+	idUser: number
+	idClinicHistory: number
+	createdAt: string
+	updatedAt: string
+	active: boolean
+	medical_recipe_details: MedicalRecipeDetailsType[]
 }

@@ -83,8 +83,6 @@ export const Users = () => {
       SheetTitle: 'Permisos del usuario',
       SheetType: 2
     }))
-
-
   }
 
   const handleSheet = () => {

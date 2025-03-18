@@ -5,8 +5,9 @@ import { Button } from "@/components/ui/button"
 import { Form } from "@/components/ui/form"
 import { FormInput } from '@/components/Form'
 import { UserType } from "@/types"
-import { usePost } from "@/hooks"
+import { usePost, } from "@/hooks"
 import { useToast } from "@/hooks/use-toast"
+
 
 
 
@@ -26,7 +27,6 @@ const formSchema = z.object({
   }).max(15, {
     message: "El teléfono debe tener menos de 15 caracteres",
   }),
-  password: z.string().optional().nullable(),
 })
 
 type FormUserProps = {
@@ -38,6 +38,7 @@ type FormUserProps = {
 export const FormUser = ({ selectedUser, update, closeSheet }: FormUserProps) => {
   const { execute, loading } = usePost()
   const { toast } = useToast()
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -46,9 +47,11 @@ export const FormUser = ({ selectedUser, update, closeSheet }: FormUserProps) =>
       lastname2: selectedUser?.lastname2 || "",
       email: selectedUser?.email || "",
       phone: selectedUser?.phone || "",
-      password: undefined,
+
     },
   })
+
+
 
   function onSubmit(values: z.infer<typeof formSchema>) {
 
@@ -73,6 +76,7 @@ export const FormUser = ({ selectedUser, update, closeSheet }: FormUserProps) =>
       }
     })
   }
+
 
   return (
     <div>
@@ -107,14 +111,6 @@ export const FormUser = ({ selectedUser, update, closeSheet }: FormUserProps) =>
             control={form.control}
             required
           />
-          {!selectedUser && (
-            <FormInput
-              label="Contraseña"
-              name="password"
-              control={form.control}
-              required
-            />
-          )}
 
           <div className="flex justify-end">
             <Button type="submit" disabled={loading}>

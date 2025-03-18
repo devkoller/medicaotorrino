@@ -36,7 +36,7 @@ export const ClinicHistory = ({ clinic, idPatient, updatePatient }: ClinicHistor
   const print = () => {
     return clinic?.map((c, i) => {
       return (
-        <AccordionItem value={`${c.id}-${i}`} key={i}>
+        <AccordionItem value={`item-${i}`} key={i}>
           <AccordionTrigger>
             <div className="flex flex-col gap-1 ">
               <span className="text-lg font-bold">Historia clínica</span>
@@ -45,11 +45,9 @@ export const ClinicHistory = ({ clinic, idPatient, updatePatient }: ClinicHistor
             </div>
           </AccordionTrigger>
           <AccordionContent>
-
             <article className='flex flex-col border border-gray-400 rounded-md'>
               <div className='flex w-full'>
                 <Button onClick={() => {
-                  console.log(c.id);
                   window.open(`${API_URL}/patient/pdf/${idPatient}?id_clinic=${c.id}`, '_blank')
 
                 }} className='w-full'>
@@ -58,6 +56,12 @@ export const ClinicHistory = ({ clinic, idPatient, updatePatient }: ClinicHistor
                 </Button>
               </div>
 
+              {c.mc && (
+                <div className='border-b border-gray-400'>
+                  <p className='font-bold bg-gray-200 p-3'>Motivo de consulta</p>
+                  <p className='p-2'>{c.mc}</p>
+                </div>
+              )}
               {c.evolution && (
                 <div className='border-b border-gray-400'>
                   <p className='font-bold bg-gray-200 p-3'>Evolución del padecimiento</p>
@@ -96,14 +100,8 @@ export const ClinicHistory = ({ clinic, idPatient, updatePatient }: ClinicHistor
               )}
               {c.idx && (
                 <div className='border-b border-gray-400'>
-                  <p className='font-bold bg-gray-200 p-3'>IDX</p>
+                  <p className='font-bold bg-gray-200 p-3'>Diagnostico</p>
                   <p className='p-2'>{c.idx}</p>
-                </div>
-              )}
-              {c.plan && (
-                <div className='border-b border-gray-400'>
-                  <p className='font-bold bg-gray-200 p-3'>Plan</p>
-                  <p className='p-2'>{c.plan}</p>
                 </div>
               )}
             </article>
@@ -124,7 +122,7 @@ export const ClinicHistory = ({ clinic, idPatient, updatePatient }: ClinicHistor
           <h2 className='font-bold'>Historias clínicas</h2>
         </div>
 
-        <Accordion type="single" collapsible>
+        <Accordion type="single" collapsible defaultValue='item-0'>
           {print()}
 
         </Accordion>

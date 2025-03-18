@@ -7,7 +7,6 @@ import { FormInput, FormCombobox } from '@/components/Form'
 import { PatientType } from "@/types"
 import { usePost, useFetch } from "@/hooks"
 import { useToast } from "@/hooks/use-toast"
-import { useNavigate } from "react-router-dom"
 import { useState, useEffect } from "react"
 
 const formSchema = z.object({
@@ -33,14 +32,13 @@ const formSchema = z.object({
 
 type FormPatientProps = {
   selectedPatient: PatientType | null
-  update?: () => void
-  closeSheet?: () => void
+  updatePatient: () => void
+  closeDialog: () => void
 }
 
-export const FormPatient = ({ selectedPatient, }: FormPatientProps) => {
+export const FormPatientModify = ({ selectedPatient, updatePatient, closeDialog }: FormPatientProps) => {
   const { execute, loading } = usePost()
   const { toast } = useToast()
-  const navigate = useNavigate()
   const [genders, setGenders] = useState([])
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -61,7 +59,7 @@ export const FormPatient = ({ selectedPatient, }: FormPatientProps) => {
   })
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    let url = selectedPatient ? `/medical-office/update` : "/patient/create"
+    let url = selectedPatient ? `/patient/update` : "/patient/create"
     let method = selectedPatient ? "put" : "post"
 
     execute({
@@ -77,7 +75,8 @@ export const FormPatient = ({ selectedPatient, }: FormPatientProps) => {
           title: "Paciente guardado",
           description: "Paciente guardado correctamente",
         })
-        navigate(`/admin-pacientes/${res.data.id}`)
+        updatePatient()
+        closeDialog()
       }
     })
   }

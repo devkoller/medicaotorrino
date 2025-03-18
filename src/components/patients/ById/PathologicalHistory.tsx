@@ -12,6 +12,7 @@ interface PathologicalHistoryProps {
   pathological?: PatientPathologicalHistoryType | null
   idPatient: number
   updatePatient: () => void
+  closeDialog: () => void
 }
 
 const formSchema = z.object({
@@ -27,7 +28,7 @@ const formSchema = z.object({
 })
 
 
-export const PathologicalHistory = ({ pathological, idPatient, updatePatient }: PathologicalHistoryProps) => {
+export const PathologicalHistory = ({ pathological, idPatient, updatePatient, closeDialog }: PathologicalHistoryProps) => {
   const { execute, loading } = usePost()
   const { toast } = useToast()
   const form = useForm<z.infer<typeof formSchema>>({
@@ -66,6 +67,7 @@ export const PathologicalHistory = ({ pathological, idPatient, updatePatient }: 
           description: "Los antecedentes patológicos han sido guardados correctamente",
         })
         updatePatient()
+        closeDialog()
       }
     })
   }

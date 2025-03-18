@@ -12,6 +12,7 @@ interface FamilyHistoryProps {
   family?: PatientFamilyHistoryType | null
   idPatient: number
   updatePatient: () => void
+  closeDialog: () => void
 }
 
 const formSchema = z.object({
@@ -19,7 +20,7 @@ const formSchema = z.object({
   other_medications: z.string().optional().nullable(),
 })
 
-export const FamilyHistory = ({ family, idPatient, updatePatient }: FamilyHistoryProps) => {
+export const FamilyHistory = ({ family, idPatient, updatePatient, closeDialog }: FamilyHistoryProps) => {
   const { execute, loading } = usePost()
   const { toast } = useToast()
   const form = useForm<z.infer<typeof formSchema>>({
@@ -51,6 +52,7 @@ export const FamilyHistory = ({ family, idPatient, updatePatient }: FamilyHistor
           description: "Los antecedentes familiares han sido guardados correctamente",
         })
         updatePatient()
+        closeDialog()
       }
     })
   }

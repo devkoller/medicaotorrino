@@ -1,16 +1,58 @@
+import { useState } from "react"
 import { PatientType } from "@/types"
-import { FaTimes } from "react-icons/fa"
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion"
-
+import { format } from "date-fns"
+import { Badge } from "@/components/ui/badge"
 import { PathologicalHistory } from './PathologicalHistory'
 import { History } from './History'
 import { FamilyHistory } from './FamilyHistory'
-import { Address } from './Address'
+import { Button } from "@/components/ui/button"
+import { utils } from "@/utils"
+import { ClinicHistory } from '@/components/patients/ById/ClinicHistory'
+import { useNavigate } from "react-router-dom"
+import { Address } from "./Address"
+import { FormPatientModify } from "../FormPatientModify"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle
+} from "@/components/ui/card"
+import {
+  Avatar,
+  AvatarFallback,
+} from "@/components/ui/avatar"
+import {
+  CalendarIcon,
+  Phone,
+  MapPin,
+  User,
+  Users,
+  PillBottle,
+  Cigarette,
+  Wine,
+  Glasses,
+  Rabbit,
+  Bed,
+  Mail,
+  Wrench
+} from "lucide-react"
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger
+} from "@/components/ui/tabs"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
+
+
+
 
 
 
@@ -18,264 +60,361 @@ interface PatientProps {
   patient: PatientType | null
   idPatient: number
   updatePatient: () => void
+  onViewHistory: () => void
 }
 
-export const Patient = ({ patient, idPatient, updatePatient }: PatientProps) => {
+interface StateTypeof {
+  patient: PatientType | null
+  dialogTile: string
+  dialogType: number
+}
+
+export const Patient = ({ patient, updatePatient, onViewHistory }: PatientProps) => {
+  const [openDialog, setOpenDialog] = useState(false)
+  const navigate = useNavigate()
+  const [Data, setData] = useState<StateTypeof>({
+    patient: null,
+    dialogTile: '',
+    dialogType: 0
+  })
+
+  const handleDialog = (type: number) => {
+    const dialogs = {
+      1: 'Antecedentes patológicos',
+      2: 'Antecedentes no patológicos',
+      3: 'Antecedentes familiares',
+      4: 'Dirección del paciente',
+      5: 'Información personal',
+    }
+    setData(prev => ({
+      ...prev,
+      dialogTile: dialogs[type as keyof typeof dialogs],
+      dialogType: type
+    }))
+  }
   return (
     <>
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-12">
-        <div className="col-span-12 md:col-span-8">
-          <section className="flex flex-col border border-gray-400 p-3 rounded-md gap-1">
-            <div className="flex gap-1">
-              <span>
-                Nombre:
-              </span>
-              <span className="flex-1 border-b border-black">{patient?.name} {patient?.lastname1} {patient?.lastname2}</span>
-              <span>
-                Fecha Nac.:
-              </span>
-              <span className="border-b border-black">{patient?.birthdate}</span>
-            </div>
-            <div className="flex gap-1">
-              <span>
-                Teléfono:
-              </span>
-              <span className="flex-1 border-b border-black">{patient?.phone}</span>
-              <span>
-                Ocupación:
-              </span>
-              <span className="flex-1 border-b border-black">{patient?.workIn}</span>
-            </div>
-
-            {patient?.patient_address && (
-              <>
-                <div className="flex gap-1">
-                  <span>
-                    Calle:
-                  </span>
-                  <span className="flex-1 border-b border-black">{patient?.patient_address?.street}</span>
-                  <span>
-                    Col.:
-                  </span>
-                  <span className="flex-1 border-b border-black">{patient?.patient_address?.neighborhood}</span>
-                </div>
-                <div className="flex gap-1">
-                  <span>
-                    Estado:
-                  </span>
-                  <span className="flex-1 border-b border-black">{patient?.patient_address?.state}</span>
-                  <span>
-                    País:
-                  </span>
-                  <span className="flex-1 border-b border-black">{patient?.patient_address?.country}</span>
-                </div>
-              </>
-            )}
-
-          </section>
-
-          <Accordion type="single" collapsible>
-            {!patient?.pathological_history && (
-              <AccordionItem value="pathological">
-                <AccordionTrigger>
-                  <div className="flex gap-1 items-center">
-                    <FaTimes /> Aun no se ha registrado antecedentes patológicos
-                  </div>
-                </AccordionTrigger>
-                <AccordionContent>
-                  <PathologicalHistory pathological={patient?.pathological_history} idPatient={idPatient} updatePatient={updatePatient} />
-                </AccordionContent>
-              </AccordionItem>
-            )}
-
-            {!patient?.history && (
-              <AccordionItem value="history">
-                <AccordionTrigger>
-                  <div className="flex gap-1 items-center">
-                    <FaTimes /> Aun no se ha registrado antecedentes no patológicos
-                  </div>
-                </AccordionTrigger>
-                <AccordionContent>
-                  <History nonPathological={patient?.history} idPatient={idPatient} updatePatient={updatePatient} />
-                </AccordionContent>
-              </AccordionItem>
-            )}
-
-            {!patient?.family_history && (
-              <AccordionItem value="family">
-                <AccordionTrigger>
-                  <div className="flex gap-1 items-center">
-                    <FaTimes /> Aun no se ha registrado antecedentes familiares
-                  </div>
-                </AccordionTrigger>
-                <AccordionContent>
-                  <FamilyHistory family={patient?.family_history} idPatient={idPatient} updatePatient={updatePatient} />
-                </AccordionContent>
-              </AccordionItem>
-            )}
-
-            {!patient?.patient_address && (
-              <AccordionItem value="address">
-                <AccordionTrigger>
-                  <div className="flex gap-1 items-center">
-                    <FaTimes /> Aun no se ha registrado dirección del paciente
-                  </div>
-                </AccordionTrigger>
-                <AccordionContent>
-                  <Address add={patient?.patient_address} idPatient={idPatient} updatePatient={updatePatient} />
-                </AccordionContent>
-              </AccordionItem>
-            )}
-
-          </Accordion>
-        </div>
-
-        <div className="col-span-12 md:col-span-4 flex flex-col gap-3">
-          {patient?.pathological_history && (
-            <section className="flex flex-col border border-gray-400 p-3 rounded-md gap-1">
-              <h2 className="text-lg font-bold">Antecedentes patológicos</h2>
-              <div className="flex gap-1">
-                <span>
-                  Cirugías:
-                </span>
-                <span className="flex-1 border-b border-black">{patient?.pathological_history?.surgery ? 'Si' : 'No'}</span>
-              </div>
-
-              {patient?.pathological_history?.surgery && (
-                <div className="flex gap-1 px-3">
-                  <span>
-                    Cuales?:
-                  </span>
-                  <span className="flex-1 border-b border-black">{patient?.pathological_history?.surgery_description}</span>
-                </div>
-              )}
-
-
-              <div className="flex gap-1">
-                <span>
-                  Alergias:
-                </span>
-                <span className="flex-1 border-b border-black">{patient?.pathological_history?.allergies ? 'Si' : 'No'}</span>
-              </div>
-              {patient?.pathological_history?.allergies && (
-                <div className="flex gap-1 px-3">
-                  <span>
-                    A que?:
-                  </span>
-                  <span className="flex-1 border-b border-black">{patient?.pathological_history?.allergies_description}</span>
-                </div>
-              )}
-
-
-              <div className="flex gap-1">
-                <span>
-                  Otras enfermedades:
-                </span>
-                <span className="flex-1 border-b border-black">{patient?.pathological_history?.other_diseases ? 'Si' : 'No'}</span>
-              </div>
-              {patient?.pathological_history?.other_diseases && (
-                <div className="flex gap-1 px-3">
-                  <span>
-                    Otras:
-                  </span>
-                  <span className="flex-1 border-b border-black">{patient?.pathological_history?.other_diseases_description}</span>
-                </div>
-              )}
-
-              <div className="flex gap-1">
-                <span>
-                  Asma:
-                </span>
-                <span className="flex-1 border-b border-black">{patient?.pathological_history?.asthma ? 'Si' : 'No'}</span>
-              </div>
-
-              <div className="flex gap-1">
-                <span>
-                  Diabetes Mellitus:
-                </span>
-                <span className="flex-1 border-b border-black">{patient?.pathological_history?.dm ? 'Si' : 'No'}</span>
-              </div>
-
-              <div className="flex gap-1">
-                <span>
-                  Hipertensión Arterial:
-                </span>
-                <span className="flex-1 border-b border-black">{patient?.pathological_history?.has ? 'Si' : 'No'}</span>
-              </div>
-
-
-
-            </section>
-          )}
-
-          {patient?.history && (
-            <section className="flex flex-col border border-gray-400 p-3 rounded-md gap-1">
-              <h2 className="text-lg font-bold">Antecedentes no patológicos</h2>
-
-              <div className="flex gap-1">
-                <span>
-                  Tabaquismo:
-                </span>
-                <span className="flex-1 border-b border-black">{patient?.history?.tabaquism ? 'Si' : 'No'}</span>
-              </div>
-              <div className="flex gap-1">
-                <span>
-                  Alcoholismo:
-                </span>
-                <span className="flex-1 border-b border-black">{patient?.history?.alcoholism ? 'Si' : 'No'}</span>
-              </div>
-              <div className="flex gap-1">
-                <span>
-                  Usa lentes:
-                </span>
-                <span className="flex-1 border-b border-black">{patient?.history?.use_glasses ? 'Si' : 'No'}</span>
-              </div>
-
-              <div className="flex gap-1">
-                <span>
-                  Convive con animales:
-                </span>
-                <span className="flex-1 border-b border-black">{patient?.history?.animals ? 'Si' : 'No'}</span>
-              </div>
-
-              <div className="flex gap-1">
-                <span>
-                  Hábitos de sueño:
-                </span>
-                <span className="flex-1 border-b border-black">{patient?.history?.sleep_habits ? 'Si' : 'No'}</span>
-              </div>
-
-              {patient?.history?.sleep_habits && (
-                <div className="flex gap-1 px-3">
-                  <span>
-                    Cuales?:
-                  </span>
-                  <span className="flex-1 border-b border-black">{patient?.history?.sleep_habits_description}</span>
-                </div>
-              )}
-            </section>
-          )}
-
-          {patient?.family_history && (
-            <section className="flex flex-col border border-gray-400 p-3 rounded-md gap-1">
-              <h2 className="text-lg font-bold">Antecedentes familiares</h2>
-              <div className="">
-                <span>
-                  Antecedentes familiares:
-                </span>
-                <p className="flex-1 border-b border-black">{patient?.family_history?.family_history}</p>
-              </div>
-              <div className="">
-                <span>
-                  Otros medicamentos:
-                </span>
-                <p className="flex-1 border-b border-black">{patient?.family_history?.other_medications}</p>
-              </div>
-            </section>
-          )}
-        </div>
-
+      <div className="mb-3 flex justify-end">
+        <Button variant="outline" onClick={() => {
+          navigate('/admin-pacientes')
+        }}>
+          Regresar a lista de usuarios
+        </Button>
       </div>
+      <Card className="mb-6">
+        <CardHeader className="pb-4">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <div className="flex items-center gap-4">
+              <Avatar className="h-16 w-16 border-2 border-primary/10">
+                {/* <AvatarImage src={patient.profileImage} alt={patient.name} /> */}
+                <AvatarFallback className="text-lg">{utils.getInitials(patient?.name || '')}</AvatarFallback>
+              </Avatar>
+              <div>
+                <CardTitle className="text-2xl">{`${patient?.name} ${patient?.lastname1} ${patient?.lastname2}`}</CardTitle>
+                <CardDescription className="flex items-center mt-1">
+                  <CalendarIcon className="h-3.5 w-3.5 mr-1" />
+                  {format(`${patient?.birthdate}T00:00:00`, "MMMM d, yyyy")} ({utils.calculateAge(new Date(`${patient?.birthdate}T00:00:00`))} years)
+                </CardDescription>
+              </div>
+            </div>
+            <Badge variant="outline" className="w-fit">
+              Paciente ID: {patient?.id}
+            </Badge>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <Tabs defaultValue="personal" className="w-full">
+            <TabsList className="grid w-full grid-cols-2">
+              <TabsTrigger value="personal">Información personal</TabsTrigger>
+              <TabsTrigger value="medical">Historial medico</TabsTrigger>
+            </TabsList>
+
+
+
+            <TabsContent value="personal" className="pt-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <div>
+                    <h3 className="text-sm font-medium text-muted-foreground mb-1">Genero</h3>
+                    <div className="flex items-center">
+                      <User className="h-4 w-4 mr-2 text-primary" />
+                      <span>{utils.formatGender(patient?.gender || 0)}</span>
+                    </div>
+                  </div>
+
+                  <div>
+                    <h3 className="text-sm font-medium text-muted-foreground mb-1">Teléfono</h3>
+                    <div className="flex items-center">
+                      <Phone className="h-4 w-4 mr-2 text-primary" />
+                      <span>{patient?.phone || 'Sin teléfono registrado'}</span>
+                    </div>
+                  </div>
+
+                  <div>
+                    <h3 className="text-sm font-medium text-muted-foreground mb-1">Correo</h3>
+                    <div className="flex items-center">
+                      <Mail className="h-4 w-4 mr-2 text-primary" />
+                      <span>{patient?.email || 'Sin correo registrado'}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <h3 className="text-sm font-medium text-muted-foreground mb-1">Dirección</h3>
+                  <div className="flex items-start">
+                    <MapPin className="h-4 w-4 mr-2 mt-0.5 text-primary" />
+                    {!patient?.patient_address && (
+                      <span className="text-muted-foreground">
+                        No se ha registrado una dirección
+                      </span>
+                    )}
+                    {patient?.patient_address && (
+                      <div>
+                        <p className="whitespace-pre-wrap">{patient.patient_address.street}</p>
+                        <p className="whitespace-pre-wrap">{patient.patient_address.city}, {patient.patient_address.state}</p>
+                        <p className="whitespace-pre-wrap">{patient.patient_address.country}</p>
+                        <p className="whitespace-pre-wrap">{patient.patient_address.zip_code}</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                <div>
+                  <h3 className="text-sm font-medium text-muted-foreground mb-1">Ocupación</h3>
+                  <div className="flex items-center">
+                    <Wrench className="h-4 w-4 mr-2 text-primary" />
+                    <span>{patient?.workIn || 'Sin ocupación registrada'}</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex justify-end mt-6 gap-2">
+                <Button variant="outline" onClick={() => {
+                  handleDialog(5)
+                  setOpenDialog(true)
+                }}>Editar paciente</Button>
+                <Button variant="outline" onClick={() => {
+                  handleDialog(4)
+                  setOpenDialog(true)
+                }}>Editar dirección</Button>
+                <Button onClick={onViewHistory}>
+                  Ver historial completo
+                </Button>
+              </div>
+            </TabsContent>
+
+            <TabsContent value="medical" className="pt-6">
+              <ClinicHistory clinic={patient?.clinic_histories} idPatient={patient?.id || 0} updatePatient={updatePatient} />
+            </TabsContent>
+
+          </Tabs>
+        </CardContent>
+      </Card>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <Card>
+          <CardHeader className="pb-2">
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+              <CardTitle className="text-base">Antecedentes patológicos</CardTitle>
+              <Button onClick={() => {
+                handleDialog(1)
+                setOpenDialog(true)
+              }}>
+                Editar
+              </Button>
+            </div>
+          </CardHeader>
+          <CardContent>
+            {!patient?.pathological_history && (
+              <p className="text-sm text-muted-foreground">No se han registrados antecedentes patológicos</p>
+            )}
+
+            {patient?.pathological_history && (
+              <div className="space-y-2">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                  {patient?.pathological_history?.asthma && (
+                    <div className="flex items-center">
+                      <span>Asma</span>
+                    </div>
+
+                  )}
+
+                  {patient?.pathological_history?.dm && (
+                    <div className="flex items-center">
+                      <span>Diabetes Mellitus</span>
+                    </div>
+
+                  )}
+
+                  {patient?.pathological_history?.has && (
+                    <div className="flex items-center">
+                      <span>Hipertensión Arterial</span>
+                    </div>
+                  )}
+
+                  {patient?.pathological_history?.surgery && (
+                    <div>
+                      <h3 className="text-sm font-medium text-muted-foreground mb-1">Cirugías</h3>
+                      <div className="flex items-center">
+                        <span>{patient?.pathological_history?.surgery_description}</span>
+                      </div>
+                    </div>
+                  )}
+
+                  {patient?.pathological_history?.allergies && (
+                    <div>
+                      <h3 className="text-sm font-medium text-muted-foreground mb-1">Alergias</h3>
+                      <div className="flex items-center">
+                        <span>{patient?.pathological_history?.allergies_description}</span>
+                      </div>
+                    </div>
+                  )}
+
+                </div>
+                {patient?.pathological_history?.other_diseases && (
+                  <div>
+                    <h3 className="text-sm font-medium text-muted-foreground mb-1">Otras enfermedades</h3>
+                    <div className="flex items-center">
+                      <span>{patient?.pathological_history?.other_diseases_description}</span>
+                    </div>
+                  </div>
+                )}
+
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="pb-2">
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+              <CardTitle className="text-base">Antecedentes no patológicos</CardTitle>
+              <Button onClick={() => {
+                handleDialog(2)
+                setOpenDialog(true)
+              }}>
+                Editar
+              </Button>
+            </div>
+          </CardHeader>
+          <CardContent>
+            {!patient?.history && (
+              <p className="text-sm text-muted-foreground">No se han registrados antecedentes no patológicos</p>
+            )}
+
+            {patient?.history && (
+              <div className="space-y-2">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                  {patient?.history?.tabaquism && (
+                    <div className="flex items-center">
+                      <Cigarette className="h-4 w-4 mr-2 text-primary" />
+                      <span>Tabaquismo</span>
+                    </div>
+                  )}
+
+                  {patient?.history?.alcoholism && (
+                    <div className="flex items-center">
+                      <Wine className="h-4 w-4 mr-2 text-primary" />
+                      <span>Alcoholismo</span>
+                    </div>
+                  )}
+
+                  {patient?.history?.use_glasses && (
+                    <div className="flex items-center">
+                      <Glasses className="h-4 w-4 mr-2 text-primary" />
+                      <span>Usa lentes</span>
+                    </div>
+                  )}
+
+                  {patient?.history?.animals && (
+                    <div className="flex items-center">
+                      <Rabbit className="h-4 w-4 mr-2 text-primary" />
+                      <span>Convive con animales</span>
+                    </div>
+                  )}
+
+                  {patient?.history?.sleep_habits && (
+                    <div>
+                      <h3 className="text-sm font-medium text-muted-foreground mb-1">Hábitos de sueño</h3>
+                      <div className="flex items-center">
+                        <Bed className="h-4 w-4 mr-2 text-primary" />
+                        <span>{patient?.history?.sleep_habits_description}</span>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="pb-2">
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+              <CardTitle className="text-base">Antecedentes familiares</CardTitle>
+              <Button onClick={() => {
+                handleDialog(3)
+                setOpenDialog(true)
+              }}>
+                Editar
+              </Button>
+            </div>
+          </CardHeader>
+          <CardContent>
+            {!patient?.family_history && (
+              <p className="text-sm text-muted-foreground">No se han registrados antecedentes familiares</p>
+            )}
+            {patient?.family_history && (
+              <div className="space-y-4">
+
+                <div>
+                  <h3 className="text-sm font-medium text-muted-foreground mb-1">Antecedentes familiares</h3>
+                  <div className="flex items-center">
+                    <Users className="h-4 w-4 mr-2 text-primary" />
+                    <span>{patient?.family_history?.family_history}</span>
+                  </div>
+                </div>
+
+                <div>
+                  <h3 className="text-sm font-medium text-muted-foreground mb-1">Otros medicamentos</h3>
+                  <div className="flex items-center">
+                    <PillBottle className="h-4 w-4 mr-2 text-primary" />
+                    <span>{patient?.family_history?.other_medications}</span>
+                  </div>
+                </div>
+
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </div>
+
+      <Dialog open={openDialog} onOpenChange={setOpenDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>
+              {Data.dialogTile}
+            </DialogTitle>
+            <DialogDescription>
+            </DialogDescription>
+          </DialogHeader>
+          {Data.dialogType === 1 && (
+            <PathologicalHistory pathological={patient?.pathological_history} idPatient={patient?.id || 0} updatePatient={updatePatient} closeDialog={() => { setOpenDialog(false) }} />
+          )}
+          {Data.dialogType === 2 && (
+            <History nonPathological={patient?.history} idPatient={patient?.id || 0} updatePatient={updatePatient} closeDialog={() => { setOpenDialog(false) }} />
+          )}
+          {Data.dialogType === 3 && (
+            <FamilyHistory family={patient?.family_history} idPatient={patient?.id || 0} updatePatient={updatePatient} closeDialog={() => { setOpenDialog(false) }} />
+          )}
+          {Data.dialogType === 4 && (
+            <Address add={patient?.patient_address} idPatient={patient?.id || 0} updatePatient={updatePatient} closeDialog={() => { setOpenDialog(false) }} />
+          )}
+          {Data.dialogType === 5 && (
+            <FormPatientModify selectedPatient={patient} updatePatient={updatePatient} closeDialog={() => { setOpenDialog(false) }} />
+          )}
+        </DialogContent>
+      </Dialog>
     </>
   )
 }

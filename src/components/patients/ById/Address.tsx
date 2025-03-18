@@ -11,6 +11,7 @@ interface AddressProps {
   add?: PatientAddressType | null
   idPatient: number
   updatePatient: () => void
+  closeDialog: () => void
 }
 
 const formSchema = z.object({
@@ -22,7 +23,7 @@ const formSchema = z.object({
   zip_code: z.string().optional().nullable(),
 })
 
-export const Address = ({ add, idPatient, updatePatient }: AddressProps) => {
+export const Address = ({ add, idPatient, updatePatient, closeDialog }: AddressProps) => {
   const { execute, loading } = usePost()
   const { toast } = useToast()
   const form = useForm<z.infer<typeof formSchema>>({
@@ -58,6 +59,7 @@ export const Address = ({ add, idPatient, updatePatient }: AddressProps) => {
           description: "La dirección del paciente ha sido guardada correctamente",
         })
         updatePatient()
+        closeDialog()
       }
     })
   }

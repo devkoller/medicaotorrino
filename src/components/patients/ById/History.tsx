@@ -12,6 +12,7 @@ interface HistoryProps {
   nonPathological?: PatientHistoryType | null
   idPatient: number
   updatePatient: () => void
+  closeDialog: () => void
 }
 
 const formSchema = z.object({
@@ -23,7 +24,7 @@ const formSchema = z.object({
   animals: z.boolean().optional(),
 })
 
-export const History = ({ nonPathological, idPatient, updatePatient }: HistoryProps) => {
+export const History = ({ nonPathological, idPatient, updatePatient, closeDialog }: HistoryProps) => {
   const { execute, loading } = usePost()
   const { toast } = useToast()
   const form = useForm<z.infer<typeof formSchema>>({
@@ -59,6 +60,7 @@ export const History = ({ nonPathological, idPatient, updatePatient }: HistoryPr
           description: "Los antecedentes no patológicos han sido guardados correctamente",
         })
         updatePatient()
+        closeDialog()
       }
     })
   }
