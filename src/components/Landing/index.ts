@@ -9,6 +9,8 @@ import { Maps } from "./Maps"
 import { Footer } from "./Footer"
 import { MembersOf } from "./MembersOf"
 
+export * from "./OurSpecialist"
+
 export {
 	Contact,
 	Menu,

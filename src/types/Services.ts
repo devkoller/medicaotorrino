@@ -6,4 +6,5 @@ export interface ServiceType {
 	public?: boolean
 	type: number
 	active?: boolean
+	suffering?: string
 }

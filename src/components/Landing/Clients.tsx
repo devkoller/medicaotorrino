@@ -1,15 +1,16 @@
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel"
-import Autoplay from "embla-carousel-autoplay"
 import { useState, useEffect } from 'react'
 import { useFetch } from "@/hooks"
 import { ServiceType } from "@/types"
-import { HiOutlineCheckCircle } from "react-icons/hi2";
+import { Icon } from "@/components/ui/icon"
+
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle
+} from "@/components/ui/card"
+
 
 export const Clients = () => {
   const [ServiceData, setServiceData] = useState<ServiceType[]>([])
@@ -21,21 +22,33 @@ export const Clients = () => {
     }
   })
 
-
-  const print = () => {
-    return ServiceData.map((item, index) => {
-      return <CarouselItem className="basis-1/2 md:basis-3/12 flex items-center" key={index}>
-        <div className="flex w-full flex-col items-center gap-3 px-5 grayscale duration-500 hover:grayscale-0">
-          <div className="flex flex-col gap-3 items-center">
-            <HiOutlineCheckCircle className="text-medica text-6xl" />
-            <p className="text-center">
-              {item.name}
+  const printServices = () => {
+    return ServiceData.map((service, index) => {
+      return (
+        <Card key={index}>
+          <CardHeader className="flex flex-row items-center gap-4">
+            {/* <service.icon  /> */}
+            <Icon iconName={service.icon || ''} className="h-6 w-6 text-primary" />
+            <div className="grid gap-1" >
+              <CardTitle>
+                {service.name}
+              </CardTitle>
+              <CardDescription>
+                {service.suffering}
+              </CardDescription>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <p className="text-sm text-muted-foreground">
+              {service.description}
             </p>
-          </div>
-        </div>
-      </CarouselItem>
+          </CardContent>
+        </Card>
+      )
     })
   }
+
+
 
   useEffect(() => {
     if (data) {
@@ -45,29 +58,25 @@ export const Clients = () => {
 
 
   return (
-    <div className='w-10/12 mx-auto py-10 relative z-10' data-aos='zoom-in'>
-      <div className='flex justify-center mb-5'>
-        <h2 className='text-xl lg:text-3xl text-medica'>
-          Nuestros servicios
-        </h2>
+    <section id="services" className="w-full py-12 md:py-24 lg:py-32 bg-muted">
+      <div className="container px-4 md:px-6 mx-auto">
+        <div className="flex flex-col items-center justify-center space-y-4 text-center">
+          <div className="space-y-2">
+            <div className="inline-block rounded-lg bg-primary px-3 py-1 text-sm text-primary-foreground">
+              Especialidades
+            </div>
+            <h2 className="text-3xl font-bold tracking-tighter md:text-4xl">
+              Servicios
+            </h2>
+            <p className="max-w-[900px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
+              Nosotros ofrecemos una amplia gama de opciones de diagnóstico y tratamiento para afecciones de oído, nariz y garganta.
+            </p>
+          </div>
+        </div>
+        <div className="mx-auto grid max-w-5xl items-stretch gap-6 py-12 md:grid-cols-2 lg:grid-cols-3">
+          {printServices()}
+        </div>
       </div>
-      <Carousel
-        opts={{
-          align: "center",
-          loop: true,
-        }}
-        plugins={[
-          Autoplay({
-            delay: 3000,
-          }),
-        ]}
-      >
-        <CarouselContent>
-          {print()}
-        </CarouselContent>
-        <CarouselPrevious />
-        <CarouselNext />
-      </Carousel>
-    </div>
+    </section>
   )
 }

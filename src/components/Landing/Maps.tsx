@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button'
 
 export const Maps = () => {
   return (
-    <section className="bg-medica py-10">
+    <section className="bg-medica py-10" id="contact">
       <div className="w-10/12 mx-auto grid  md:grid-cols-2 gap-5 text-white">
         <div className='flex flex-col gap-5'>
           <img src={logo} alt="" />
