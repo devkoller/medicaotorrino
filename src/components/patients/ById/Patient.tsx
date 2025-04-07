@@ -1,16 +1,21 @@
 import { useState } from "react"
-import { PatientType } from "@/types"
+import { PatientType, AppointmentType } from "@/types"
 import { format } from "date-fns"
 import { Badge } from "@/components/ui/badge"
-import { PathologicalHistory } from './PathologicalHistory'
-import { History } from './History'
+import { PathologicalHistory } from './FormPathologicalHistory'
+import { History } from './FormHistory'
 import { FamilyHistory } from './FamilyHistory'
 import { Button } from "@/components/ui/button"
 import { utils } from "@/utils"
-import { ClinicHistory } from '@/components/patients/ById/ClinicHistory'
 import { useNavigate } from "react-router-dom"
-import { Address } from "./Address"
+import { Address } from "./FormAddress"
 import { FormPatientModify } from "../FormPatientModify"
+import { PatientMedicalHistory } from "@/components/patients"
+import { TabPatientInformation } from './TabPatientInformation'
+import { TabAppointments } from './TabAppointments'
+import { PathologicalCard } from './PathologicalCard'
+import { NonPathologicalCard } from './NonPathologicalCard'
+import { FamilyCard } from './FamilyCard'
 import {
   Card,
   CardContent,
@@ -24,18 +29,6 @@ import {
 } from "@/components/ui/avatar"
 import {
   CalendarIcon,
-  Phone,
-  MapPin,
-  User,
-  Users,
-  PillBottle,
-  Cigarette,
-  Wine,
-  Glasses,
-  Rabbit,
-  Bed,
-  Mail,
-  Wrench
 } from "lucide-react"
 import {
   Tabs,
@@ -61,6 +54,7 @@ interface PatientProps {
   idPatient: number
   updatePatient: () => void
   onViewHistory: () => void
+  setClinicHistory: (clinicHistory: AppointmentType) => void
 }
 
 interface StateTypeof {
@@ -69,7 +63,7 @@ interface StateTypeof {
   dialogType: number
 }
 
-export const Patient = ({ patient, updatePatient, onViewHistory }: PatientProps) => {
+export const Patient = ({ patient, updatePatient, onViewHistory, setClinicHistory }: PatientProps) => {
   const [openDialog, setOpenDialog] = useState(false)
   const navigate = useNavigate()
   const [Data, setData] = useState<StateTypeof>({
@@ -122,89 +116,36 @@ export const Patient = ({ patient, updatePatient, onViewHistory }: PatientProps)
             </Badge>
           </div>
         </CardHeader>
+
         <CardContent>
           <Tabs defaultValue="personal" className="w-full">
-            <TabsList className="grid w-full grid-cols-2">
+            <TabsList className="grid w-full grid-cols-3">
               <TabsTrigger value="personal">Información personal</TabsTrigger>
+              <TabsTrigger value="appointments">Citas</TabsTrigger>
               <TabsTrigger value="medical">Historial medico</TabsTrigger>
             </TabsList>
 
-
-
             <TabsContent value="personal" className="pt-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <div>
-                    <h3 className="text-sm font-medium text-muted-foreground mb-1">Genero</h3>
-                    <div className="flex items-center">
-                      <User className="h-4 w-4 mr-2 text-primary" />
-                      <span>{utils.formatGender(patient?.gender || 0)}</span>
-                    </div>
-                  </div>
+              <TabPatientInformation
+                patient={patient}
+                handleDialog={handleDialog}
+                setOpenDialog={setOpenDialog}
+                onViewHistory={onViewHistory}
+              />
+            </TabsContent>
 
-                  <div>
-                    <h3 className="text-sm font-medium text-muted-foreground mb-1">Teléfono</h3>
-                    <div className="flex items-center">
-                      <Phone className="h-4 w-4 mr-2 text-primary" />
-                      <span>{patient?.phone || 'Sin teléfono registrado'}</span>
-                    </div>
-                  </div>
-
-                  <div>
-                    <h3 className="text-sm font-medium text-muted-foreground mb-1">Correo</h3>
-                    <div className="flex items-center">
-                      <Mail className="h-4 w-4 mr-2 text-primary" />
-                      <span>{patient?.email || 'Sin correo registrado'}</span>
-                    </div>
-                  </div>
-                </div>
-
-                <div>
-                  <h3 className="text-sm font-medium text-muted-foreground mb-1">Dirección</h3>
-                  <div className="flex items-start">
-                    <MapPin className="h-4 w-4 mr-2 mt-0.5 text-primary" />
-                    {!patient?.patient_address && (
-                      <span className="text-muted-foreground">
-                        No se ha registrado una dirección
-                      </span>
-                    )}
-                    {patient?.patient_address && (
-                      <div>
-                        <p className="whitespace-pre-wrap">{patient.patient_address.street}</p>
-                        <p className="whitespace-pre-wrap">{patient.patient_address.city}, {patient.patient_address.state}</p>
-                        <p className="whitespace-pre-wrap">{patient.patient_address.country}</p>
-                        <p className="whitespace-pre-wrap">{patient.patient_address.zip_code}</p>
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                <div>
-                  <h3 className="text-sm font-medium text-muted-foreground mb-1">Ocupación</h3>
-                  <div className="flex items-center">
-                    <Wrench className="h-4 w-4 mr-2 text-primary" />
-                    <span>{patient?.workIn || 'Sin ocupación registrada'}</span>
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex justify-end mt-6 gap-2">
-                <Button variant="outline" onClick={() => {
-                  handleDialog(5)
-                  setOpenDialog(true)
-                }}>Editar paciente</Button>
-                <Button variant="outline" onClick={() => {
-                  handleDialog(4)
-                  setOpenDialog(true)
-                }}>Editar dirección</Button>
-                <Button onClick={onViewHistory}>
-                  Ver historial completo
-                </Button>
-              </div>
+            <TabsContent value="appointments" className="pt-6">
+              <TabAppointments
+                patient={patient}
+                handleDialog={handleDialog}
+                setOpenDialog={setOpenDialog}
+                onViewHistory={onViewHistory}
+                setClinicHistory={setClinicHistory}
+              />
             </TabsContent>
 
             <TabsContent value="medical" className="pt-6">
-              <ClinicHistory clinic={patient?.clinic_histories} idPatient={patient?.id || 0} updatePatient={updatePatient} />
+              <PatientMedicalHistory patient={patient} />
             </TabsContent>
 
           </Tabs>
@@ -212,181 +153,11 @@ export const Patient = ({ patient, updatePatient, onViewHistory }: PatientProps)
       </Card>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card>
-          <CardHeader className="pb-2">
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-              <CardTitle className="text-base">Antecedentes patológicos</CardTitle>
-              <Button onClick={() => {
-                handleDialog(1)
-                setOpenDialog(true)
-              }}>
-                Editar
-              </Button>
-            </div>
-          </CardHeader>
-          <CardContent>
-            {!patient?.pathological_history && (
-              <p className="text-sm text-muted-foreground">No se han registrados antecedentes patológicos</p>
-            )}
 
-            {patient?.pathological_history && (
-              <div className="space-y-2">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                  {patient?.pathological_history?.asthma && (
-                    <div className="flex items-center">
-                      <span>Asma</span>
-                    </div>
+        <PathologicalCard patient={patient} handleDialog={updatePatient} setOpenDialog={setOpenDialog} />
+        <NonPathologicalCard patient={patient} handleDialog={updatePatient} setOpenDialog={setOpenDialog} />
+        <FamilyCard patient={patient} handleDialog={updatePatient} setOpenDialog={setOpenDialog} />
 
-                  )}
-
-                  {patient?.pathological_history?.dm && (
-                    <div className="flex items-center">
-                      <span>Diabetes Mellitus</span>
-                    </div>
-
-                  )}
-
-                  {patient?.pathological_history?.has && (
-                    <div className="flex items-center">
-                      <span>Hipertensión Arterial</span>
-                    </div>
-                  )}
-
-                  {patient?.pathological_history?.surgery && (
-                    <div>
-                      <h3 className="text-sm font-medium text-muted-foreground mb-1">Cirugías</h3>
-                      <div className="flex items-center">
-                        <span>{patient?.pathological_history?.surgery_description}</span>
-                      </div>
-                    </div>
-                  )}
-
-                  {patient?.pathological_history?.allergies && (
-                    <div>
-                      <h3 className="text-sm font-medium text-muted-foreground mb-1">Alergias</h3>
-                      <div className="flex items-center">
-                        <span>{patient?.pathological_history?.allergies_description}</span>
-                      </div>
-                    </div>
-                  )}
-
-                </div>
-                {patient?.pathological_history?.other_diseases && (
-                  <div>
-                    <h3 className="text-sm font-medium text-muted-foreground mb-1">Otras enfermedades</h3>
-                    <div className="flex items-center">
-                      <span>{patient?.pathological_history?.other_diseases_description}</span>
-                    </div>
-                  </div>
-                )}
-
-              </div>
-            )}
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="pb-2">
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-              <CardTitle className="text-base">Antecedentes no patológicos</CardTitle>
-              <Button onClick={() => {
-                handleDialog(2)
-                setOpenDialog(true)
-              }}>
-                Editar
-              </Button>
-            </div>
-          </CardHeader>
-          <CardContent>
-            {!patient?.history && (
-              <p className="text-sm text-muted-foreground">No se han registrados antecedentes no patológicos</p>
-            )}
-
-            {patient?.history && (
-              <div className="space-y-2">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                  {patient?.history?.tabaquism && (
-                    <div className="flex items-center">
-                      <Cigarette className="h-4 w-4 mr-2 text-primary" />
-                      <span>Tabaquismo</span>
-                    </div>
-                  )}
-
-                  {patient?.history?.alcoholism && (
-                    <div className="flex items-center">
-                      <Wine className="h-4 w-4 mr-2 text-primary" />
-                      <span>Alcoholismo</span>
-                    </div>
-                  )}
-
-                  {patient?.history?.use_glasses && (
-                    <div className="flex items-center">
-                      <Glasses className="h-4 w-4 mr-2 text-primary" />
-                      <span>Usa lentes</span>
-                    </div>
-                  )}
-
-                  {patient?.history?.animals && (
-                    <div className="flex items-center">
-                      <Rabbit className="h-4 w-4 mr-2 text-primary" />
-                      <span>Convive con animales</span>
-                    </div>
-                  )}
-
-                  {patient?.history?.sleep_habits && (
-                    <div>
-                      <h3 className="text-sm font-medium text-muted-foreground mb-1">Hábitos de sueño</h3>
-                      <div className="flex items-center">
-                        <Bed className="h-4 w-4 mr-2 text-primary" />
-                        <span>{patient?.history?.sleep_habits_description}</span>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
-            )}
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="pb-2">
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-              <CardTitle className="text-base">Antecedentes familiares</CardTitle>
-              <Button onClick={() => {
-                handleDialog(3)
-                setOpenDialog(true)
-              }}>
-                Editar
-              </Button>
-            </div>
-          </CardHeader>
-          <CardContent>
-            {!patient?.family_history && (
-              <p className="text-sm text-muted-foreground">No se han registrados antecedentes familiares</p>
-            )}
-            {patient?.family_history && (
-              <div className="space-y-4">
-
-                <div>
-                  <h3 className="text-sm font-medium text-muted-foreground mb-1">Antecedentes familiares</h3>
-                  <div className="flex items-center">
-                    <Users className="h-4 w-4 mr-2 text-primary" />
-                    <span>{patient?.family_history?.family_history}</span>
-                  </div>
-                </div>
-
-                <div>
-                  <h3 className="text-sm font-medium text-muted-foreground mb-1">Otros medicamentos</h3>
-                  <div className="flex items-center">
-                    <PillBottle className="h-4 w-4 mr-2 text-primary" />
-                    <span>{patient?.family_history?.other_medications}</span>
-                  </div>
-                </div>
-
-              </div>
-            )}
-          </CardContent>
-        </Card>
       </div>
 
       <Dialog open={openDialog} onOpenChange={setOpenDialog}>

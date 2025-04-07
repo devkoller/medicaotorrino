@@ -22,6 +22,7 @@ const formSchema = z.object({
   sleep_habits: z.boolean().optional(),
   sleep_habits_description: z.string().optional().nullable(),
   animals: z.boolean().optional(),
+  other_diseases: z.boolean().optional(),
 })
 
 export const History = ({ nonPathological, idPatient, updatePatient, closeDialog }: HistoryProps) => {
@@ -65,7 +66,12 @@ export const History = ({ nonPathological, idPatient, updatePatient, closeDialog
     })
   }
 
+  const tabaquism = form.watch('tabaquism')
+  const alcoholism = form.watch('alcoholism')
   const sleeps = form.watch('sleep_habits')
+  const use_glasses = form.watch('use_glasses')
+  const animals = form.watch('animals')
+  const other_diseases = form.watch('other_diseases')
 
 
   return (
@@ -73,22 +79,47 @@ export const History = ({ nonPathological, idPatient, updatePatient, closeDialog
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
           <div className='grid grid-cols-12 items-center'>
-            <div className='col-span-12 md:col-span-2'>
+            <div className='col-span-12'>
               <FormSwitch
                 label="Tabaquismo"
                 name="tabaquism"
                 control={form.control}
               />
             </div>
+            {tabaquism && (
+              <div className='col-span-12'>
+                <FormInput
+                  label="Tabaquismo (Descripción)"
+                  type='textarea'
+                  name="tabaquism_description"
+                  control={form.control}
+                />
+              </div>
+            )}
           </div>
-          <FormSwitch
-            label="Alcoholismo"
-            name="alcoholism"
-            control={form.control}
-          />
 
           <div className='grid grid-cols-12 items-center'>
-            <div className='col-span-12 md:col-span-2 mb-2'>
+            <div className='col-span-12'>
+              <FormSwitch
+                label="Alcoholismo"
+                name="alcoholism"
+                control={form.control}
+              />
+            </div>
+            {alcoholism && (
+              <div className='col-span-12'>
+                <FormInput
+                  label="Alcoholismo (Descripción)"
+                  type='textarea'
+                  name="alcoholism_description"
+                  control={form.control}
+                />
+              </div>
+            )}
+          </div>
+
+          <div className='grid grid-cols-12 items-center'>
+            <div className='col-span-12'>
               <FormSwitch
                 label="Hábitos de sueño"
                 name="sleep_habits"
@@ -107,20 +138,64 @@ export const History = ({ nonPathological, idPatient, updatePatient, closeDialog
             )}
           </div>
 
-          <FormSwitch
-            label="Usa lentes?"
-            name="use_glasses"
-            control={form.control}
-          />
+          <div className='grid grid-cols-12 items-center'>
+            <div className='col-span-12'>
+              <FormSwitch
+                label="Usa lentes?"
+                name="use_glasses"
+                control={form.control}
+              />
+            </div>
+            {use_glasses && (
+              <div className='col-span-12'>
+                <FormInput
+                  label="Usa lentes (Descripción)"
+                  type='textarea'
+                  name="use_glasses_description"
+                  control={form.control}
+                />
+              </div>
+            )}
+          </div>
 
-          <FormSwitch
-            label="Convive con animales?"
-            name="animals"
-            control={form.control}
-          />
+          <div className='grid grid-cols-12 items-center'>
+            <div className='col-span-12'>
+              <FormSwitch
+                label="Convive con animales?"
+                name="animals"
+                control={form.control}
+              />
+            </div>
+            {animals && (
+              <div className='col-span-12'>
+                <FormInput
+                  label="Convive con animales (Descripción)"
+                  type='textarea'
+                  name="animals_description"
+                  control={form.control}
+                />
+              </div>
+            )}
+          </div>
 
-
-
+          <div className='grid grid-cols-12 items-center'>
+            <div className='col-span-12'>
+              <FormSwitch
+                label="Otras?"
+                name="other_diseases"
+                control={form.control}
+              />
+            </div>
+            {other_diseases && (
+              <div className='col-span-12'>
+                <FormInput
+                  type='textarea'
+                  name="other_diseases_description"
+                  control={form.control}
+                />
+              </div>
+            )}
+          </div>
 
           <div className="flex">
             <Button type="submit" disabled={loading}>

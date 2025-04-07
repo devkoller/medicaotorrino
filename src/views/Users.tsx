@@ -65,15 +65,15 @@ export const Users = () => {
       SheetType: 1
     }))
   }
-  const handleNewPermission = () => {
-    setOpen(prev => !prev)
-    setData(prev => ({
-      ...prev,
-      selectedUser: null,
-      SheetTitle: 'Nuevo permiso',
-      SheetType: 3
-    }))
-  }
+  // const handleNewPermission = () => {
+  //   setOpen(prev => !prev)
+  //   setData(prev => ({
+  //     ...prev,
+  //     selectedUser: null,
+  //     SheetTitle: 'Nuevo permiso',
+  //     SheetType: 3
+  //   }))
+  // }
 
   const handleGrants = (user: UserType) => {
     setOpen(prev => !prev)
@@ -131,9 +131,9 @@ export const Users = () => {
           <Button size="sm" onClick={handleNewUser}>
             Nuevo usuario
           </Button>
-          <Button size="sm" onClick={handleNewPermission}>
+          {/* <Button size="sm" onClick={handleNewPermission}>
             Nuevo permiso
-          </Button>
+          </Button> */}
         </PageActions>
       </PageHeader>
 

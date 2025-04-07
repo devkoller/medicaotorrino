@@ -75,6 +75,9 @@ export const PathologicalHistory = ({ pathological, idPatient, updatePatient, cl
   const surgery = form.watch('surgery')
   const allergies = form.watch('allergies')
   const other = form.watch('other_diseases')
+  const asthma = form.watch('asthma')
+  const dm = form.watch('dm')
+  const has = form.watch('has')
 
 
   return (
@@ -82,7 +85,7 @@ export const PathologicalHistory = ({ pathological, idPatient, updatePatient, cl
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
           <div className='grid grid-cols-12 items-center'>
-            <div className='col-span-12 md:col-span-2'>
+            <div className='col-span-12'>
               <FormSwitch
                 label="Tiene cirugías?"
                 name="surgery"
@@ -90,7 +93,7 @@ export const PathologicalHistory = ({ pathological, idPatient, updatePatient, cl
               />
             </div>
             {surgery && (
-              <div className='col-span-12 md:col-span-12'>
+              <div className='col-span-12'>
                 <FormInput
                   label="Cuales?"
                   type='textarea'
@@ -102,15 +105,15 @@ export const PathologicalHistory = ({ pathological, idPatient, updatePatient, cl
           </div>
 
           <div className='grid grid-cols-12 items-center'>
-            <div className='col-span-12 md:col-span-2'>
+            <div className='col-span-12'>
               <FormSwitch
-                label="Tiene cirugías?"
+                label="Tiene alergias?"
                 name="allergies"
                 control={form.control}
               />
             </div>
             {allergies && (
-              <div className='col-span-12 md:col-span-12'>
+              <div className='col-span-12'>
                 <FormInput
                   label="A que?"
                   type='textarea'
@@ -121,21 +124,69 @@ export const PathologicalHistory = ({ pathological, idPatient, updatePatient, cl
             )}
           </div>
 
-          <FormSwitch
-            label="Asma"
-            name="asthma"
-            control={form.control}
-          />
-          <FormSwitch
-            label="Diabetes Mellitus"
-            name="dm"
-            control={form.control}
-          />
-          <FormSwitch
-            label="Hipertensión Arterial"
-            name="has"
-            control={form.control}
-          />
+          <div className='grid grid-cols-12 items-center'>
+            <div className='col-span-12'>
+              <FormSwitch
+                label="Asma"
+                name="asthma"
+                control={form.control}
+              />
+            </div>
+            {asthma && (
+              <div className='col-span-12'>
+                <FormInput
+                  label="Asma (Descripción)"
+                  type='textarea'
+                  name="asthma_description"
+                  control={form.control}
+                />
+              </div>
+            )}
+          </div>
+
+          <div className='grid grid-cols-12 items-center'>
+            <div className='col-span-12'>
+              <FormSwitch
+                label="Diabetes Mellitus"
+                name="dm"
+                control={form.control}
+              />
+            </div>
+            {dm && (
+              <div className='col-span-12'>
+                <FormInput
+                  label="Diabetes Mellitus (Descripción)"
+                  type='textarea'
+                  name="dm_description"
+                  control={form.control}
+                />
+              </div>
+            )}
+          </div>
+
+          <div className='grid grid-cols-12 items-center'>
+            <div className='col-span-12'>
+              <FormSwitch
+                label="Hipertensión Arterial"
+                name="has"
+                control={form.control}
+              />
+            </div>
+            {has && (
+              <div className='col-span-12'>
+                <FormInput
+                  label="Hipertensión Arterial (Descripción)"
+                  type='textarea'
+                  name="has_description"
+                  control={form.control}
+                />
+              </div>
+            )}
+          </div>
+
+
+
+
 
           <div className='grid grid-cols-12 items-center'>
             <div className='col-span-12 md:col-span-2 mb-2'>
@@ -146,7 +197,7 @@ export const PathologicalHistory = ({ pathological, idPatient, updatePatient, cl
               />
             </div>
             {other && (
-              <div className='col-span-12 md:col-span-12'>
+              <div className='col-span-12'>
                 <FormInput
                   type='textarea'
                   name="other_diseases_description"

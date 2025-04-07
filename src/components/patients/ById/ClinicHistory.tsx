@@ -1,4 +1,3 @@
-import { FormClinicHistory } from './FormClinicHistory'
 import { PatientClinicType } from '@/types'
 import {
   Accordion,
@@ -18,7 +17,7 @@ interface ClinicHistoryProps {
   updatePatient: () => void
 }
 
-export const ClinicHistory = ({ clinic, idPatient, updatePatient }: ClinicHistoryProps) => {
+export const ClinicHistory = ({ clinic, }: ClinicHistoryProps) => {
   const { execute, loading } = usePost()
   const formateDate = (format?: string) => {
     if (!format) return 'Sin fecha'
@@ -138,7 +137,6 @@ export const ClinicHistory = ({ clinic, idPatient, updatePatient }: ClinicHistor
 
   return (
     <div className='grid grid-cols-1 lg:grid-cols-2 gap-3'>
-      <FormClinicHistory idPatient={idPatient} updatePatient={updatePatient} />
 
 
       <div className='flex flex-col gap-3'>

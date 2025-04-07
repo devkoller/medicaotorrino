@@ -10,7 +10,7 @@ const Input = React.forwardRef<HTMLInputElement, React.ComponentProps<"input">>(
     const [Type, setType] = useState(type)
 
     return (
-      <div className="flex w-full max-w-md items-center space-x-2">
+      <div className="flex w-full items-center space-x-2">
         <input
           type={Type}
           className={cn(

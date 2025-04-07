@@ -1,7 +1,6 @@
-import { FormInput } from "./FormInput"
-import { FormCheckBox } from "./FormCheckBox"
-import { FormCombobox } from "./FormCombobox"
-import { FormDatePicker } from "./FormDatePicker"
+export * from "./FormInput"
+export * from "./FormCheckBox"
+export * from "./FormCombobox"
+export * from "./FormDatePicker"
 export * from "./FormSwitch"
-
-export { FormInput, FormCheckBox, FormCombobox, FormDatePicker }
+export * from "./FormInputAutoComplete"

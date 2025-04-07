@@ -44,7 +44,6 @@ export const Address = ({ add, idPatient, updatePatient, closeDialog }: AddressP
       idPatient,
       id: add?.id,
     }
-    console.log("🚀 > Address.tsx:46 > onSubmit > body:", body);
     let url = add ? `/patient/update-address` : "/patient/create-address"
     let method = add ? "patch" : "post"
 

@@ -3,7 +3,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { Button } from "@/components/ui/button"
 import { Form } from "@/components/ui/form"
-import { FormInput } from '@/components/Form'
+import { FormInput, FormSwitch } from '@/components/Form'
 import { UserType } from "@/types"
 import { usePost, } from "@/hooks"
 import { useToast } from "@/hooks/use-toast"
@@ -27,6 +27,8 @@ const formSchema = z.object({
   }).max(15, {
     message: "El teléfono debe tener menos de 15 caracteres",
   }),
+  isPublished: z.boolean().optional(),
+  isDoctor: z.boolean().optional(),
 })
 
 type FormUserProps = {
@@ -47,7 +49,8 @@ export const FormUser = ({ selectedUser, update, closeSheet }: FormUserProps) =>
       lastname2: selectedUser?.lastname2 || "",
       email: selectedUser?.email || "",
       phone: selectedUser?.phone || "",
-
+      isPublished: selectedUser?.isPublished || false,
+      isDoctor: selectedUser?.isDoctor || false,
     },
   })
 
@@ -110,6 +113,16 @@ export const FormUser = ({ selectedUser, update, closeSheet }: FormUserProps) =>
             name="phone"
             control={form.control}
             required
+          />
+          <FormSwitch
+            label="¿Es doctor?"
+            name="isDoctor"
+            control={form.control}
+          />
+          <FormSwitch
+            label="¿Está publicado?"
+            name="isPublished"
+            control={form.control}
           />
 
           <div className="flex justify-end">

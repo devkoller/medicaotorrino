@@ -8,7 +8,6 @@ import { AdminServices } from "@/views/AdminServices"
 import { AdminMedicalOffice } from "@/views/AdminMedicalOffice"
 import { AdminPatients } from "@/views/AdminPatients"
 import { PatientById } from "@/views/PatientById"
-import { AdminMedications } from "@/views/AdminMedications"
 
 import { UserProfile } from "@/views/UserProfile"
 import { Servicios } from "@/views/Servicios"
@@ -23,7 +22,6 @@ import {
 	FaHandHoldingMedical,
 	// FaWarehouse
 	FaUserInjured,
-	FaPills,
 } from "react-icons/fa"
 import { LuHospital } from "react-icons/lu"
 
@@ -92,16 +90,16 @@ export const routes = [
 		menu: false,
 		icon: FaUserInjured,
 	},
-	{
-		route: "/admin-medicamentos",
-		component: AdminMedications,
-		title: "Medicamentos",
-		state: "Authenticated",
-		breadcrumb: "Inicio",
-		grants: null,
-		menu: true,
-		icon: FaPills,
-	},
+	// {
+	// 	route: "/admin-medicamentos",
+	// 	component: AdminMedications,
+	// 	title: "Medicamentos",
+	// 	state: "Authenticated",
+	// 	breadcrumb: "Inicio",
+	// 	grants: null,
+	// 	menu: true,
+	// 	icon: FaPills,
+	// },
 	{
 		route: "/admin-services",
 		component: AdminServices,

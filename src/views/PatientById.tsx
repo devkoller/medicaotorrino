@@ -6,16 +6,18 @@ import { useFetch, usePost } from "@/hooks"
 import { useNavigate } from "react-router-dom"
 import { Spinner } from "@/components/ui/spinner"
 import { Button } from "@/components/ui/button"
-import { PatientType } from "@/types"
+import { PatientType, PatientClinicType, AppointmentType } from "@/types"
 
 
 //tabs
 import { Patient } from '@/components/patients/ById/Patient'
-import { PatientMedicalHistory } from '@/components/patients'
+import { FormClinicHistory } from '@/components/patients/ById/FormClinicHistory'
 
 
 interface StateTypeof {
   patient: PatientType | null
+  clinicHistory: PatientClinicType | null
+  appointment: AppointmentType | null
 }
 
 
@@ -26,11 +28,23 @@ export const PatientById = () => {
   const [viewingMedicalHistory, setViewingMedicalHistory] = useState(false)
   const [Data, setData] = useState<StateTypeof>({
     patient: null,
+    clinicHistory: null,
+    appointment: null,
   })
 
   const { response: patientData, loading } = useFetch({
     url: `/patient/get/${id}`,
   })
+
+  const setClinicHistory = (clinicHistory: AppointmentType) => {
+    setData(prev => ({
+      ...prev,
+      clinicHistory: {
+        mc: clinicHistory.reason,
+      } as PatientClinicType,
+      appointment: clinicHistory,
+    }))
+  }
 
   const updatePatient = () => {
     execute({
@@ -75,12 +89,21 @@ export const PatientById = () => {
 
 
       {viewingMedicalHistory ? (
-        <PatientMedicalHistory
-          patient={Data.patient}
+        <FormClinicHistory
+          clinic={Data.clinicHistory}
+          idPatient={Data.patient?.id || 0}
+          updatePatient={updatePatient}
+          appointment={Data.appointment}
           onBack={() => setViewingMedicalHistory(false)}
         />
       ) : (
-        <Patient patient={Data.patient} idPatient={Data.patient?.id || 0} updatePatient={updatePatient} onViewHistory={() => setViewingMedicalHistory(true)} />
+        <Patient
+          patient={Data.patient}
+          idPatient={Data.patient?.id || 0}
+          updatePatient={updatePatient}
+          onViewHistory={() => setViewingMedicalHistory(true)}
+          setClinicHistory={setClinicHistory}
+        />
       )}
 
 

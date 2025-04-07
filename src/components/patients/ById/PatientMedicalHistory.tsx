@@ -6,16 +6,17 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
 import { utils } from "@/utils"
 import { usePost } from '@/hooks';
+import { API_URL } from '@/api/config'
+
 
 interface PatientMedicalHistoryProps {
   patient: PatientType | null
-  onBack: () => void
 }
 
-export const PatientMedicalHistory = ({ patient, onBack }: PatientMedicalHistoryProps) => {
+export const PatientMedicalHistory = ({ patient, }: PatientMedicalHistoryProps) => {
   const { execute, loading } = usePost()
 
   const printHistory = () => {
@@ -27,11 +28,12 @@ export const PatientMedicalHistory = ({ patient, onBack }: PatientMedicalHistory
       )
     }
 
-    const pullRecipe = (id: number) => {
+    const pullRecipe = (id: number, tam: number) => {
       execute({
         url: `/patient/pdf`,
         body: {
           id_clinic: id,
+          tam
         }
       }).then((res: any) => {
         if (res.status === 200) {
@@ -60,16 +62,17 @@ export const PatientMedicalHistory = ({ patient, onBack }: PatientMedicalHistory
           <div className="bg-muted/30 rounded-lg p-4">
             <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-2">
               <div>
-                <h3 className="font-medium">
-                  {history?.mc} - Motivo de consulta
-                </h3>
                 <p className="text-sm text-muted-foreground">{format(`${history?.updatedAt}`, "MMMM d, yyyy")}</p>
+                <div>
+                  <p className="text-muted-foreground">Motivo de consulta</p>
+                  <p>{history?.mc}</p>
+                </div>
               </div>
               <div className="flex items-center mt-2 md:mt-0">
                 {history?.user && (
                   <>
                     <Avatar className="h-8 w-8 mr-2">
-                      {/* <AvatarImage src={visit.doctor.avatar} alt={visit.doctor.name} /> */}
+                      <AvatarImage src={`${API_URL}/user/get-profile-image/${history?.user.id}`} alt={history?.user.name} />
                       <AvatarFallback>{utils.getInitials(history?.user.name)}</AvatarFallback>
                     </Avatar>
                     <div className="text-sm">
@@ -81,12 +84,12 @@ export const PatientMedicalHistory = ({ patient, onBack }: PatientMedicalHistory
               </div>
             </div>
 
-            <div>
+            <div className="mb-3">
               <p className="text-muted-foreground">Evolución</p>
               <p>{history?.evolution}</p>
             </div>
 
-            <div>
+            <div className="mb-3">
               <p className="text-muted-foreground">Diagnostico</p>
               <p>{history?.idx}</p>
             </div>
@@ -172,7 +175,7 @@ export const PatientMedicalHistory = ({ patient, onBack }: PatientMedicalHistory
                         {history?.medical_recipe?.medical_recipe_details.map((detail, index) => {
                           return (
                             <div key={index}>
-                              <p className="text-muted-foreground">{`${detail.medication.brand} - ${detail.medication.name} - ${detail.medication.presentation}`}</p>
+                              <p className="text-muted-foreground">{detail.medicine_description}</p>
                               <p>{detail.frequency}</p>
                               <p>{detail.duration}</p>
                             </div>
@@ -185,10 +188,14 @@ export const PatientMedicalHistory = ({ patient, onBack }: PatientMedicalHistory
               </AccordionItem>
             </Accordion>
 
-            <div className="flex justify-end mt-2">
-              <Button variant="ghost" size="sm" onClick={() => pullRecipe(history.id)} disabled={loading}>
+            <div className="flex justify-end gap-3 mt-2">
+              <Button variant="outline" size="sm" onClick={() => pullRecipe(history.id, 1)} disabled={loading}>
                 <FileText className="h-4 w-4 mr-1" />
-                Ver receta medica
+                Ver receta (Media carta)
+              </Button>
+              <Button size="sm" onClick={() => pullRecipe(history.id, 2)} disabled={loading}>
+                <FileText className="h-4 w-4 mr-1" />
+                Ver receta (Carta)
               </Button>
             </div>
           </div>
@@ -203,13 +210,10 @@ export const PatientMedicalHistory = ({ patient, onBack }: PatientMedicalHistory
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-4">
         <div>
           <h1 className="text-2xl font-bold">Historial medico</h1>
-          <p className="text-muted-foreground">
-            {`${patient?.name} ${patient?.lastname1} ${patient?.lastname2}`} (ID: {patient?.id})
-          </p>
         </div>
-        <Button variant="outline" onClick={onBack}>
+        {/* <Button variant="outline" onClick={onBack}>
           Regresar al perfil del paciente
-        </Button>
+        </Button> */}
       </div>
 
       {/* <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">

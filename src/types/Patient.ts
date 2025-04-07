@@ -20,6 +20,7 @@ export interface PatientType {
 	family_history: PatientFamilyHistoryType | null
 	history: PatientHistoryType | null
 	clinic_histories?: PatientClinicType[]
+	appointments?: AppointmentType[]
 }
 
 export interface PatientAddressType {
@@ -96,9 +97,10 @@ export interface MedicalRecipeDetailsType {
 	duration: string
 	frequency: string
 	id_medical_recipe: number
-	id_medication: number
+	id_medication?: number
 	medication: MedicationsType
 	special_instructions?: string
+	medicine_description: string
 }
 
 export interface MedicalRecipeType {
@@ -110,4 +112,25 @@ export interface MedicalRecipeType {
 	updatedAt: string
 	active: boolean
 	medical_recipe_details: MedicalRecipeDetailsType[]
+}
+
+export interface AppointmentType {
+	id: number
+	idPatient: number
+	idUser: number
+	dateAppointment: string
+	duration: number
+	start: number
+	startTime: string
+	end: number
+	endTime: string
+	status: number
+	reason?: string
+	notes?: string
+	patientName?: string
+	patientPhone?: string
+	doctorName?: string
+	doctorSpecialty?: string
+	statusLabel?: string
+	date?: string
 }
