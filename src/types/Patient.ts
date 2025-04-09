@@ -67,13 +67,19 @@ export interface PatientHistoryType {
 	id: number
 	idPatient: number
 	tabaquism?: boolean
+	tabaquism_description?: string
 	alcoholism?: boolean
+	alcoholism_description?: string
 	drug_addiction?: boolean
 	use_glasses?: boolean
+	use_glasses_description?: string
 	use_earing_aid?: boolean
 	sleep_habits?: boolean
 	sleep_habits_description?: string
 	animals?: boolean
+	animals_description?: string
+	other_diseases?: boolean
+	other_diseases_description?: string
 }
 
 export interface PatientPathologicalHistoryType {
@@ -85,8 +91,11 @@ export interface PatientPathologicalHistoryType {
 	allergies?: boolean
 	allergies_description?: string
 	asthma?: boolean
+	asthma_description?: string
 	dm?: boolean
+	dm_description?: string
 	has?: boolean
+	has_description?: string
 	other_diseases?: boolean
 	other_diseases_description?: string
 }

@@ -43,40 +43,52 @@ export const NonPathologicalCard = ({ patient, handleDialog, setOpenDialog }: No
           <div className="space-y-2">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
               {patient?.history?.tabaquism && (
-                <div className="flex items-center">
-                  <Cigarette className="h-4 w-4 mr-2 text-primary" />
-                  <span>Tabaquismo</span>
+                <div>
+                  <div className="flex items-center">
+                    <Cigarette className="h-4 w-4 mr-2 text-primary" />
+                    <span>Tabaquismo</span>
+                  </div>
+                  <p>{patient?.history?.tabaquism_description}</p>
                 </div>
               )}
 
               {patient?.history?.alcoholism && (
-                <div className="flex items-center">
-                  <Wine className="h-4 w-4 mr-2 text-primary" />
-                  <span>Alcoholismo</span>
+                <div>
+                  <div className="flex items-center">
+                    <Wine className="h-4 w-4 mr-2 text-primary" />
+                    <span>Alcoholismo</span>
+                  </div>
+                  <p>{patient?.history?.alcoholism_description}</p>
                 </div>
               )}
 
               {patient?.history?.use_glasses && (
-                <div className="flex items-center">
-                  <Glasses className="h-4 w-4 mr-2 text-primary" />
-                  <span>Usa lentes</span>
+                <div>
+                  <div className="flex items-center">
+                    <Glasses className="h-4 w-4 mr-2 text-primary" />
+                    <span>Usa lentes</span>
+                  </div>
+                  <p>{patient?.history?.use_glasses_description}</p>
                 </div>
               )}
 
               {patient?.history?.animals && (
-                <div className="flex items-center">
-                  <Rabbit className="h-4 w-4 mr-2 text-primary" />
-                  <span>Convive con animales</span>
+                <div>
+                  <div className="flex items-center">
+                    <Rabbit className="h-4 w-4 mr-2 text-primary" />
+                    <span>Convive con animales</span>
+                  </div>
+                  <p>{patient?.history?.animals_description}</p>
                 </div>
               )}
 
               {patient?.history?.sleep_habits && (
                 <div>
-                  <h3 className="text-sm font-medium text-muted-foreground mb-1">Hábitos de sueño</h3>
                   <div className="flex items-center">
                     <Bed className="h-4 w-4 mr-2 text-primary" />
-                    <span>{patient?.history?.sleep_habits_description}</span>
+                    <h3 className="text-sm font-medium text-muted-foreground mb-1">Hábitos de sueño</h3>
                   </div>
+                  <p>{patient?.history?.sleep_habits_description}</p>
                 </div>
               )}
             </div>

@@ -154,9 +154,9 @@ export const Patient = ({ patient, updatePatient, onViewHistory, setClinicHistor
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
 
-        <PathologicalCard patient={patient} handleDialog={updatePatient} setOpenDialog={setOpenDialog} />
-        <NonPathologicalCard patient={patient} handleDialog={updatePatient} setOpenDialog={setOpenDialog} />
-        <FamilyCard patient={patient} handleDialog={updatePatient} setOpenDialog={setOpenDialog} />
+        <PathologicalCard patient={patient} handleDialog={handleDialog} setOpenDialog={setOpenDialog} />
+        <NonPathologicalCard patient={patient} handleDialog={handleDialog} setOpenDialog={setOpenDialog} />
+        <FamilyCard patient={patient} handleDialog={handleDialog} setOpenDialog={setOpenDialog} />
 
       </div>
 

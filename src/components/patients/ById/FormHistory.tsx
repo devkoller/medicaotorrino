@@ -17,12 +17,17 @@ interface HistoryProps {
 
 const formSchema = z.object({
   tabaquism: z.boolean().nullable(),
+  tabaquism_description: z.string().optional().nullable(),
   alcoholism: z.boolean().optional(),
+  alcoholism_description: z.string().optional().nullable(),
   use_glasses: z.boolean().optional(),
+  use_glasses_description: z.string().optional().nullable(),
   sleep_habits: z.boolean().optional(),
   sleep_habits_description: z.string().optional().nullable(),
   animals: z.boolean().optional(),
+  animals_description: z.string().optional().nullable(),
   other_diseases: z.boolean().optional(),
+  other_diseases_description: z.string().optional().nullable(),
 })
 
 export const History = ({ nonPathological, idPatient, updatePatient, closeDialog }: HistoryProps) => {
@@ -32,11 +37,17 @@ export const History = ({ nonPathological, idPatient, updatePatient, closeDialog
     resolver: zodResolver(formSchema),
     defaultValues: {
       tabaquism: nonPathological?.tabaquism || false,
+      tabaquism_description: nonPathological?.tabaquism_description || "",
       alcoholism: nonPathological?.alcoholism || false,
+      alcoholism_description: nonPathological?.alcoholism_description || "",
       use_glasses: nonPathological?.use_glasses || false,
+      use_glasses_description: nonPathological?.use_glasses_description || "",
       sleep_habits: nonPathological?.sleep_habits || false,
       sleep_habits_description: nonPathological?.sleep_habits_description || "",
       animals: nonPathological?.animals || false,
+      animals_description: nonPathological?.animals_description || "",
+      other_diseases: nonPathological?.other_diseases || false,
+      other_diseases_description: nonPathological?.other_diseases_description || "",
     },
   })
 
