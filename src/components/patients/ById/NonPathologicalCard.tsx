@@ -16,8 +16,8 @@ import {
 
 interface NonPathologicalCardProps {
   patient: PatientType | null
-  handleDialog: (index: number) => void
-  setOpenDialog: (open: boolean) => void
+  handleDialog?: (index: number) => void
+  setOpenDialog?: (open: boolean) => void
 }
 
 export const NonPathologicalCard = ({ patient, handleDialog, setOpenDialog }: NonPathologicalCardProps) => {
@@ -26,12 +26,14 @@ export const NonPathologicalCard = ({ patient, handleDialog, setOpenDialog }: No
       <CardHeader className="pb-2">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <CardTitle className="text-base">Antecedentes no patológicos</CardTitle>
-          <Button onClick={() => {
-            handleDialog(2)
-            setOpenDialog(true)
-          }}>
-            Editar
-          </Button>
+          {handleDialog && setOpenDialog && (
+            <Button onClick={() => {
+              handleDialog(1)
+              setOpenDialog(true)
+            }}>
+              Editar
+            </Button>
+          )}
         </div>
       </CardHeader>
       <CardContent>

@@ -1,6 +1,7 @@
 import { useState } from "react"
 import { PatientType, AppointmentType } from "@/types"
-import { format } from "date-fns"
+import { format, parseISO } from "date-fns"
+import { es } from "date-fns/locale";
 import { Badge } from "@/components/ui/badge"
 import { PathologicalHistory } from './FormPathologicalHistory'
 import { History } from './FormHistory'
@@ -44,17 +45,12 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 
-
-
-
-
-
 interface PatientProps {
   patient: PatientType | null
   idPatient: number
   updatePatient: () => void
   onViewHistory: () => void
-  setClinicHistory: (clinicHistory: AppointmentType) => void
+  setClinicHistory: (clinicHistory: AppointmentType | null) => void
 }
 
 interface StateTypeof {
@@ -107,7 +103,9 @@ export const Patient = ({ patient, updatePatient, onViewHistory, setClinicHistor
                 <CardTitle className="text-2xl">{`${patient?.name} ${patient?.lastname1} ${patient?.lastname2}`}</CardTitle>
                 <CardDescription className="flex items-center mt-1">
                   <CalendarIcon className="h-3.5 w-3.5 mr-1" />
-                  {format(`${patient?.birthdate}T00:00:00`, "MMMM d, yyyy")} ({utils.calculateAge(new Date(`${patient?.birthdate}T00:00:00`))} years)
+                  {format(parseISO(`${patient?.birthdate}T00:00:00`), "d 'de' MMMM 'de' yyyy", {
+                    locale: es,
+                  })}, ({utils.calculateAge(new Date(`${patient?.birthdate}T00:00:00`))} años)
                 </CardDescription>
               </div>
             </div>
@@ -131,6 +129,7 @@ export const Patient = ({ patient, updatePatient, onViewHistory, setClinicHistor
                 handleDialog={handleDialog}
                 setOpenDialog={setOpenDialog}
                 onViewHistory={onViewHistory}
+                setClinicHistory={setClinicHistory}
               />
             </TabsContent>
 

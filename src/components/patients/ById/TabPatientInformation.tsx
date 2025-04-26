@@ -1,6 +1,7 @@
 import { PatientType } from "@/types"
 import { utils } from "@/utils"
 import { Button } from "@/components/ui/button"
+import { AppointmentType } from "@/types"
 import {
   Phone,
   MapPin,
@@ -14,6 +15,7 @@ interface TabPatientInformationProps {
   handleDialog: (index: number) => void
   setOpenDialog: (open: boolean) => void
   onViewHistory: () => void
+  setClinicHistory: (clinicHistory: AppointmentType | null) => void
 }
 
 
@@ -22,7 +24,8 @@ export const TabPatientInformation = ({
   patient,
   handleDialog,
   setOpenDialog,
-  onViewHistory
+  onViewHistory,
+  setClinicHistory
 }: TabPatientInformationProps) => {
   return (
     <>
@@ -91,7 +94,10 @@ export const TabPatientInformation = ({
           handleDialog(4)
           setOpenDialog(true)
         }}>Editar dirección</Button>
-        <Button onClick={onViewHistory}>
+        <Button onClick={() => {
+          onViewHistory()
+          setClinicHistory(null)
+        }}>
           Generar historia clínica
         </Button>
       </div>

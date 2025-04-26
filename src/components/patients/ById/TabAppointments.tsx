@@ -1,6 +1,7 @@
 import { PatientType, AppointmentType } from "@/types"
 import { Badge } from "@/components/ui/badge"
 import { format, parseISO } from "date-fns"
+import { es } from "date-fns/locale";
 import {
   FileText,
 } from "lucide-react"
@@ -46,7 +47,9 @@ export const TabAppointments = ({ patient, onViewHistory, setClinicHistory }: Ta
           {patient?.appointments?.map((appointment) => (
             <TableRow key={appointment.id}>
               <TableCell>
-                <div className="font-medium">{format(parseISO(appointment.date || ''), "MMM d, yyyy")}</div>
+                <div className="font-medium">{format(parseISO(appointment.date || ''), "d 'de' MMMM 'de' yyyy", {
+                  locale: es,
+                })}</div>
                 <div className="text-sm text-muted-foreground">
                   {format(parseISO(appointment.date || ''), "h:mm a")}
                 </div>

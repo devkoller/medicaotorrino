@@ -36,12 +36,12 @@ export const PatientById = () => {
     url: `/patient/get/${id}`,
   })
 
-  const setClinicHistory = (clinicHistory: AppointmentType) => {
+  const setClinicHistory = (clinicHistory: AppointmentType | null) => {
     setData(prev => ({
       ...prev,
-      clinicHistory: {
+      clinicHistory: clinicHistory ? {
         mc: clinicHistory.reason,
-      } as PatientClinicType,
+      } as PatientClinicType : clinicHistory,
       appointment: clinicHistory,
     }))
   }
@@ -95,6 +95,7 @@ export const PatientById = () => {
           updatePatient={updatePatient}
           appointment={Data.appointment}
           onBack={() => setViewingMedicalHistory(false)}
+          patient={Data.patient}
         />
       ) : (
         <Patient

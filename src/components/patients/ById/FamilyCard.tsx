@@ -13,8 +13,8 @@ import {
 
 interface FamilyCardProps {
   patient: PatientType | null
-  handleDialog: (index: number) => void
-  setOpenDialog: (open: boolean) => void
+  handleDialog?: (index: number) => void
+  setOpenDialog?: (open: boolean) => void
 }
 
 export const FamilyCard = ({
@@ -27,12 +27,14 @@ export const FamilyCard = ({
       <CardHeader className="pb-2">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <CardTitle className="text-base">Antecedentes familiares</CardTitle>
-          <Button onClick={() => {
-            handleDialog(3)
-            setOpenDialog(true)
-          }}>
-            Editar
-          </Button>
+          {handleDialog && setOpenDialog && (
+            <Button onClick={() => {
+              handleDialog(1)
+              setOpenDialog(true)
+            }}>
+              Editar
+            </Button>
+          )}
         </div>
       </CardHeader>
       <CardContent>

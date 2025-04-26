@@ -1,16 +1,33 @@
-import { PatientClinicType, AppointmentType } from '@/types'
+import { PatientClinicType, AppointmentType, PatientType } from '@/types'
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { Button } from "@/components/ui/button"
 import { Form } from "@/components/ui/form"
 import { FormInput, FormSwitch, FormInputAutoComplete } from '@/components/Form'
-import { usePost, useFetch } from "@/hooks"
+import { usePost, useFetch, useLocalStorage } from "@/hooks"
 import { useToast } from "@/hooks/use-toast"
 import { Card } from "@/components/ui/card"
 import { useState, useEffect } from 'react'
 import { Separator } from '@radix-ui/react-separator'
 import { FileText } from "lucide-react"
+import { PathologicalCard } from './PathologicalCard'
+import { NonPathologicalCard } from './NonPathologicalCard'
+import { FamilyCard } from './FamilyCard'
+import { PatientMedicalHistory } from "@/components/patients"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion"
 
 
 interface ClinicHistoryProps {
@@ -19,6 +36,7 @@ interface ClinicHistoryProps {
   updatePatient: () => void
   onBack: () => void
   appointment: AppointmentType | null
+  patient: PatientType | null
 }
 
 const formSchema = z.object({
@@ -36,6 +54,7 @@ const formSchema = z.object({
   plan: z.string().optional().nullable(),
   evolution: z.string().optional().nullable(),
   mc: z.string().optional().nullable(),
+  notes: z.string().optional().nullable(),
   medications: z
     .array(
       z.object({
@@ -59,38 +78,50 @@ interface StateTypeof {
   ClinicSaved: PatientClinicType | null
 }
 
-export const FormClinicHistory = ({ clinic, idPatient, updatePatient, onBack, appointment }: ClinicHistoryProps) => {
+export const FormClinicHistory = ({ clinic, idPatient, updatePatient, onBack, appointment, patient }: ClinicHistoryProps) => {
   const { execute, loading } = usePost()
   const { toast } = useToast()
   const [medications, setMedications] = useState([])
   const [Data, setData] = useState<StateTypeof>({
     ClinicSaved: null,
   })
+  const [openDialog, setOpenDialog] = useState(false)
+
+
+  const defaultValues = {
+    mc: "",
+    evolution: "",
+    oral: false,
+    oral_description: "",
+    nose: false,
+    nose_description: "",
+    earing_left: false,
+    earing_left_description: "",
+    earing_right: false,
+    earing_right_description: "",
+    face: false,
+    face_description: "",
+    idx: "",
+    plan: "",
+    notes: "",
+    medications: [
+      {
+        medicine_description: "",
+        frequency: "",
+        duration: "",
+      },
+    ],
+  }
+
+  const [localStorage, setLocalStorage] = useLocalStorage({
+    key: "FormClinicHistory",
+    defaultValue: defaultValues,
+  })
+
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      oral: clinic?.oral || false,
-      oral_description: clinic?.oral_description || "",
-      nose: clinic?.nose || false,
-      nose_description: clinic?.nose_description || "",
-      earing_left: clinic?.earing_left || false,
-      earing_left_description: clinic?.earing_left_description || "",
-      earing_right: clinic?.earing_right || false,
-      earing_right_description: clinic?.earing_right_description || "",
-      face: clinic?.face || false,
-      face_description: clinic?.face_description || "",
-      idx: clinic?.idx || "",
-      evolution: clinic?.evolution || "",
-      mc: clinic?.mc || "",
-      medications: [
-        {
-          medicine_description: '',
-          frequency: "",
-          duration: "",
-        },
-      ],
-    },
+    defaultValues: localStorage,
   })
 
   const { response: medicationsData } = useFetch({
@@ -162,24 +193,58 @@ export const FormClinicHistory = ({ clinic, idPatient, updatePatient, onBack, ap
     }
   }, [medicationsData])
 
+  useEffect(() => {
+
+    const subscription = form.watch((values) => {
+      setLocalStorage(values);
+    });
+    return () => subscription.unsubscribe();
+  }, [form.watch, localStorage]);
+
 
   return (
-    <div className=''>
-      <div className='flex justify-end mb-5'>
-        {Data.ClinicSaved && (
-          <>
-            <Button variant="outline" size="sm" onClick={() => pullRecipe(Data?.ClinicSaved?.id || 0, 1)} disabled={loading}>
-              <FileText className="h-4 w-4 mr-1" />
-              Ver receta (Media carta)
-            </Button>
-            <Button size="sm" onClick={() => pullRecipe(Data?.ClinicSaved?.id || 0, 2)} disabled={loading}>
-              <FileText className="h-4 w-4 mr-1" />
-              Ver receta (Carta)
-            </Button>
-          </>
-        )}
-        <Button variant="outline" onClick={onBack}>
-          Regresar al perfil del paciente
+    <div>
+      <div className='flex justify-between mb-5'>
+        <div>
+          <h2 className="text-lg font-semibold">Historia clínica</h2>
+          <p className="text-sm text-muted-foreground">Llena los campos requeridos</p>
+        </div>
+        <div className='flex items-center gap-3'>
+          {Data.ClinicSaved && (
+            <>
+              <Button variant="outline" size="sm" onClick={() => pullRecipe(Data?.ClinicSaved?.id || 0, 1)} disabled={loading}>
+                <FileText className="h-4 w-4 mr-1" />
+                Ver receta (Media carta)
+              </Button>
+              <Button size="sm" onClick={() => pullRecipe(Data?.ClinicSaved?.id || 0, 2)} disabled={loading}>
+                <FileText className="h-4 w-4 mr-1" />
+                Ver receta (Carta)
+              </Button>
+            </>
+          )}
+          <Button variant="outline" onClick={onBack}>
+            Regresar al perfil del paciente
+          </Button>
+        </div>
+      </div>
+      <div className='flex justify-between mb-5'>
+        <Accordion type="single" collapsible>
+          <AccordionItem value="item-1">
+            <AccordionTrigger>Antecedes del paciente</AccordionTrigger>
+            <AccordionContent>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+
+                <PathologicalCard patient={patient} />
+                <NonPathologicalCard patient={patient} />
+                <FamilyCard patient={patient} />
+
+              </div>
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
+        <Button onClick={() => setOpenDialog(true)} >
+          <FileText className="h-4 w-4 mr-1" />
+          Ver el ultimo historial clínico
         </Button>
       </div>
       <Separator className="mb-4" />
@@ -308,6 +373,13 @@ export const FormClinicHistory = ({ clinic, idPatient, updatePatient, onBack, ap
                 name="idx"
                 control={form.control}
               />
+
+              <FormInput
+                label="Observaciones"
+                type='textarea'
+                name="notes"
+                control={form.control}
+              />
             </div>
 
 
@@ -399,6 +471,19 @@ export const FormClinicHistory = ({ clinic, idPatient, updatePatient, onBack, ap
           </div>
         </form>
       </Form>
+
+      <Dialog open={openDialog} onOpenChange={setOpenDialog}>
+        <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>
+              Ultimo historial clínico
+            </DialogTitle>
+            <DialogDescription>
+            </DialogDescription>
+            <PatientMedicalHistory patient={patient} top={1} />
+          </DialogHeader>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

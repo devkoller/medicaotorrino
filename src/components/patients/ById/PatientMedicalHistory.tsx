@@ -1,5 +1,6 @@
 import { PatientType } from "@/types"
-import { format } from "date-fns"
+import { format, parseISO } from "date-fns"
+import { es } from "date-fns/locale";
 import { Calendar, FileText } from "lucide-react"
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -14,10 +15,36 @@ import { API_URL } from '@/api/config'
 
 interface PatientMedicalHistoryProps {
   patient: PatientType | null
+  top?: number
 }
 
-export const PatientMedicalHistory = ({ patient, }: PatientMedicalHistoryProps) => {
+export const PatientMedicalHistory = ({ patient, top }: PatientMedicalHistoryProps) => {
   const { execute, loading } = usePost()
+
+  const pullRecipe = (id: number, tam: number) => {
+    execute({
+      url: `/patient/pdf`,
+      body: {
+        id_clinic: id,
+        tam
+      }
+    }).then((res: any) => {
+      if (res.status === 200) {
+        const byteCharacters = atob(res.data)
+        const byteNumbers = new Uint8Array(byteCharacters.length)
+
+        for (let i = 0; i < byteCharacters.length; i++) {
+          byteNumbers[i] = byteCharacters.charCodeAt(i)
+        }
+
+        const blob = new Blob([byteNumbers], { type: "application/pdf" })
+        const blobURL = URL.createObjectURL(blob)
+
+        // Abrir en una nueva pestaña
+        window.open(blobURL, "_blank")
+      }
+    })
+  }
 
   const printHistory = () => {
     if (patient?.clinic_histories?.length === 0) {
@@ -28,32 +55,12 @@ export const PatientMedicalHistory = ({ patient, }: PatientMedicalHistoryProps) 
       )
     }
 
-    const pullRecipe = (id: number, tam: number) => {
-      execute({
-        url: `/patient/pdf`,
-        body: {
-          id_clinic: id,
-          tam
-        }
-      }).then((res: any) => {
-        if (res.status === 200) {
-          const byteCharacters = atob(res.data)
-          const byteNumbers = new Uint8Array(byteCharacters.length)
 
-          for (let i = 0; i < byteCharacters.length; i++) {
-            byteNumbers[i] = byteCharacters.charCodeAt(i)
-          }
-
-          const blob = new Blob([byteNumbers], { type: "application/pdf" })
-          const blobURL = URL.createObjectURL(blob)
-
-          // Abrir en una nueva pestaña
-          window.open(blobURL, "_blank")
-        }
-      })
-    }
 
     return patient?.clinic_histories?.map((history, index) => {
+      if (top && index >= top) {
+        return null
+      }
       return (
         <div key={index} className="mb-8">
           <div className="absolute -left-[41px] bg-background p-1 rounded-full border-2 border-primary">
@@ -62,7 +69,9 @@ export const PatientMedicalHistory = ({ patient, }: PatientMedicalHistoryProps) 
           <div className="bg-muted/30 rounded-lg p-4">
             <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-2">
               <div>
-                <p className="text-sm text-muted-foreground">{format(`${history?.updatedAt}`, "MMMM d, yyyy")}</p>
+                <p className="text-sm text-muted-foreground">{format(parseISO(`${history?.updatedAt}`), "d 'de' MMMM 'de' yyyy", {
+                  locale: es,
+                })}</p>
                 <div>
                   <p className="text-muted-foreground">Motivo de consulta</p>
                   <p>{history?.mc}</p>
@@ -206,57 +215,13 @@ export const PatientMedicalHistory = ({ patient, }: PatientMedicalHistoryProps) 
   }
 
   return (
-    <div className="max-w-6xl mx-auto p-4">
+    <div className="p-4">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-4">
         <div>
           <h1 className="text-2xl font-bold">Historial medico</h1>
         </div>
-        {/* <Button variant="outline" onClick={onBack}>
-          Regresar al perfil del paciente
-        </Button> */}
       </div>
 
-      {/* <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
-        <div className="md:col-span-3">
-          <div className="relative">
-            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder="Search medical records..."
-              className="pl-8"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-          </div>
-        </div>
-        <div className="grid grid-cols-2 gap-2">
-          <Select value={timeframeFilter} onValueChange={setTimeframeFilter}>
-            <SelectTrigger>
-              <SelectValue placeholder="Timeframe" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Time</SelectItem>
-              <SelectItem value="year">Past Year</SelectItem>
-              <SelectItem value="6months">Past 6 Months</SelectItem>
-              <SelectItem value="3months">Past 3 Months</SelectItem>
-            </SelectContent>
-          </Select>
-
-          <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-            <SelectTrigger>
-              <SelectValue placeholder="Category" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Categories</SelectItem>
-              <SelectItem value="visits">Visits</SelectItem>
-              <SelectItem value="diagnoses">Diagnoses</SelectItem>
-              <SelectItem value="medications">Medications</SelectItem>
-              <SelectItem value="labs">Lab Results</SelectItem>
-              <SelectItem value="imaging">Imaging</SelectItem>
-              <SelectItem value="vaccinations">Vaccinations</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-      </div> */}
 
       <Card>
         <CardHeader>
