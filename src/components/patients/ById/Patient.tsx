@@ -76,6 +76,8 @@ export const Patient = ({ patient, updatePatient, onViewHistory, setClinicHistor
       4: 'Dirección del paciente',
       5: 'Información personal',
     }
+    console.log(type);
+
     setData(prev => ({
       ...prev,
       dialogTile: dialogs[type as keyof typeof dialogs],

@@ -13,6 +13,7 @@ import { UserProfile } from "@/views/UserProfile"
 import { Servicios } from "@/views/Servicios"
 import { Instalaciones } from "@/views/Instalaciones"
 import { Conocenos } from "@/views/Conocenos"
+import { FormClinicHistory } from "@/components/patients/ById/FormClinicHistory"
 
 //ICONS
 // import { CiViewTable } from "react-icons/ci"
@@ -83,6 +84,16 @@ export const routes = [
 	{
 		route: "/admin-pacientes/:id",
 		component: PatientById,
+		title: "Pacientes",
+		state: "Authenticated",
+		breadcrumb: "Inicio",
+		grants: null,
+		menu: false,
+		icon: FaUserInjured,
+	},
+	{
+		route: "/admin-pacientes/:id/hisotoria-clinica",
+		component: FormClinicHistory,
 		title: "Pacientes",
 		state: "Authenticated",
 		breadcrumb: "Inicio",

@@ -29,7 +29,7 @@ export const FamilyCard = ({
           <CardTitle className="text-base">Antecedentes familiares</CardTitle>
           {handleDialog && setOpenDialog && (
             <Button onClick={() => {
-              handleDialog(1)
+              handleDialog(3)
               setOpenDialog(true)
             }}>
               Editar

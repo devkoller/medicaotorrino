@@ -15,6 +15,7 @@ import { PathologicalCard } from './PathologicalCard'
 import { NonPathologicalCard } from './NonPathologicalCard'
 import { FamilyCard } from './FamilyCard'
 import { PatientMedicalHistory } from "@/components/patients"
+// import { Layout } from "@/components/auth"
 import {
   Dialog,
   DialogContent,
@@ -176,6 +177,7 @@ export const FormClinicHistory = ({ clinic, idPatient, updatePatient, onBack, ap
         })
         setData(e => ({ ...e, ClinicSaved: res.data }))
         updatePatient()
+        setLocalStorage({})
       }
     })
   }

@@ -28,7 +28,7 @@ export const NonPathologicalCard = ({ patient, handleDialog, setOpenDialog }: No
           <CardTitle className="text-base">Antecedentes no patológicos</CardTitle>
           {handleDialog && setOpenDialog && (
             <Button onClick={() => {
-              handleDialog(1)
+              handleDialog(2)
               setOpenDialog(true)
             }}>
               Editar

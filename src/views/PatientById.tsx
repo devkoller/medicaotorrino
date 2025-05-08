@@ -85,9 +85,6 @@ export const PatientById = () => {
 
   return (
     <Layout>
-
-
-
       {viewingMedicalHistory ? (
         <FormClinicHistory
           clinic={Data.clinicHistory}
@@ -106,9 +103,6 @@ export const PatientById = () => {
           setClinicHistory={setClinicHistory}
         />
       )}
-
-
-
     </Layout>
   )
 }

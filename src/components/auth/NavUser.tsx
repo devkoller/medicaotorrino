@@ -31,7 +31,7 @@ import { API_URL } from "@/api/config"
 
 export function NavUser() {
   const { isMobile } = useSidebar()
-  const { name, lastname1, lastname2, email, startLogout, } = useAuthStore()
+  const { id, name, lastname1, lastname2, email, startLogout, } = useAuthStore()
 
   return (
     <SidebarMenu>
@@ -43,7 +43,7 @@ export function NavUser() {
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
               <Avatar className="h-8 w-8 rounded-lg">
-                <AvatarImage src={`${API_URL}/users/img`} alt={email || ''} />
+                <AvatarImage src={`${API_URL}/users/get-profile-image/${id}`} alt={email || ''} />
                 <AvatarFallback className="rounded-lg">{name ? `${name}`.toUpperCase().substring(0, 1) : ''}</AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
