@@ -1,4 +1,4 @@
-import { PatientClinicType, AppointmentType, PatientType } from '@/types'
+import { PatientClinicType, PatientType } from '@/types'
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
@@ -9,35 +9,13 @@ import { usePost, useFetch, useLocalStorage } from "@/hooks"
 import { useToast } from "@/hooks/use-toast"
 import { Card } from "@/components/ui/card"
 import { useState, useEffect } from 'react'
-import { Separator } from '@radix-ui/react-separator'
 import { FileText } from "lucide-react"
-import { PathologicalCard } from './PathologicalCard'
-import { NonPathologicalCard } from './NonPathologicalCard'
-import { FamilyCard } from './FamilyCard'
-import { PatientMedicalHistory } from "@/components/patients"
-// import { Layout } from "@/components/auth"
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog"
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion"
-
 
 interface ClinicHistoryProps {
   clinic?: PatientClinicType | null
   idPatient: number
   updatePatient: () => void
-  onBack: () => void
-  appointment: AppointmentType | null
-  patient: PatientType | null
+  patient?: PatientType | null
 }
 
 const formSchema = z.object({
@@ -79,14 +57,13 @@ interface StateTypeof {
   ClinicSaved: PatientClinicType | null
 }
 
-export const FormClinicHistory = ({ clinic, idPatient, updatePatient, onBack, appointment, patient }: ClinicHistoryProps) => {
+export const FormClinicHistory = ({ clinic, idPatient, updatePatient, patient }: ClinicHistoryProps) => {
   const { execute, loading } = usePost()
   const { toast } = useToast()
   const [medications, setMedications] = useState([])
   const [Data, setData] = useState<StateTypeof>({
     ClinicSaved: null,
   })
-  const [openDialog, setOpenDialog] = useState(false)
 
 
   const defaultValues = {
@@ -122,7 +99,7 @@ export const FormClinicHistory = ({ clinic, idPatient, updatePatient, onBack, ap
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: localStorage,
+    defaultValues: defaultValues,
   })
 
   const { response: medicationsData } = useFetch({
@@ -159,7 +136,6 @@ export const FormClinicHistory = ({ clinic, idPatient, updatePatient, onBack, ap
       ...values,
       idPatient,
       id: clinic?.id,
-      appointment,
     }
 
     let url = clinic?.id ? `/patient/update-clinic-history` : "/patient/create-clinic-history"
@@ -182,12 +158,45 @@ export const FormClinicHistory = ({ clinic, idPatient, updatePatient, onBack, ap
     })
   }
 
+  const setLastMedications = () => {
+    if (patient) {
+      const { clinic_histories } = patient
+      if (clinic_histories && clinic_histories.length > 0) {
+        const { medical_recipe } = clinic_histories[0]
+        if (medical_recipe) {
+          const { medical_recipe_details } = medical_recipe
+          if (medical_recipe_details && medical_recipe_details.length > 0) {
+            const lastMedications = medical_recipe_details.map((medication: any) => ({
+              medicine_description: medication.medicine_description,
+              frequency: medication.frequency,
+              duration: medication.duration,
+            }))
+            form.setValue("medications", lastMedications)
+            toast({
+              title: "",
+              description: "Medicamentos de la receta anterior han sido agregados correctamente",
+            })
+            return
+          }
+        }
+      }
+    }
+  }
+
+
 
   const oral = form.watch('oral')
   const nose = form.watch('nose')
   const earing_left = form.watch('earing_left')
   const earing_right = form.watch('earing_right')
   const face = form.watch('face')
+
+
+  useEffect(() => {
+    if (localStorage && Object.keys(localStorage).length > 0 && localStorage.idPatient === idPatient) {
+      form.reset({ ...localStorage, })
+    }
+  }, [])
 
   useEffect(() => {
     if (medicationsData) {
@@ -196,9 +205,11 @@ export const FormClinicHistory = ({ clinic, idPatient, updatePatient, onBack, ap
   }, [medicationsData])
 
   useEffect(() => {
-
     const subscription = form.watch((values) => {
-      setLocalStorage(values);
+      setLocalStorage({
+        ...values,
+        idPatient,
+      });
     });
     return () => subscription.unsubscribe();
   }, [form.watch, localStorage]);
@@ -224,32 +235,8 @@ export const FormClinicHistory = ({ clinic, idPatient, updatePatient, onBack, ap
               </Button>
             </>
           )}
-          <Button variant="outline" onClick={onBack}>
-            Regresar al perfil del paciente
-          </Button>
         </div>
       </div>
-      <div className='flex justify-between mb-5'>
-        <Accordion type="single" collapsible>
-          <AccordionItem value="item-1">
-            <AccordionTrigger>Antecedes del paciente</AccordionTrigger>
-            <AccordionContent>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-
-                <PathologicalCard patient={patient} />
-                <NonPathologicalCard patient={patient} />
-                <FamilyCard patient={patient} />
-
-              </div>
-            </AccordionContent>
-          </AccordionItem>
-        </Accordion>
-        <Button onClick={() => setOpenDialog(true)} >
-          <FileText className="h-4 w-4 mr-1" />
-          Ver el ultimo historial clínico
-        </Button>
-      </div>
-      <Separator className="mb-4" />
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
 
@@ -405,6 +392,16 @@ export const FormClinicHistory = ({ clinic, idPatient, updatePatient, onBack, ap
                   </Button>
                 </div>
 
+                {patient && (patient?.clinic_histories?.length || 0) > 0 && (
+                  <div className='flex w-full justify-end'>
+                    <Button type="button" onClick={setLastMedications}>
+                      Agregar medicamentos de la receta anterior
+                    </Button>
+                  </div>
+
+                )}
+
+
                 {form.watch("medications").map((_, index) => (
                   <Card key={index} className="p-4">
                     <div className="flex justify-between items-center mb-4">
@@ -474,18 +471,6 @@ export const FormClinicHistory = ({ clinic, idPatient, updatePatient, onBack, ap
         </form>
       </Form>
 
-      <Dialog open={openDialog} onOpenChange={setOpenDialog}>
-        <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>
-              Ultimo historial clínico
-            </DialogTitle>
-            <DialogDescription>
-            </DialogDescription>
-            <PatientMedicalHistory patient={patient} top={1} />
-          </DialogHeader>
-        </DialogContent>
-      </Dialog>
     </div>
   )
 }

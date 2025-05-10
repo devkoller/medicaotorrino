@@ -11,7 +11,6 @@ import { PatientType, PatientClinicType, AppointmentType } from "@/types"
 
 //tabs
 import { Patient } from '@/components/patients/ById/Patient'
-import { FormClinicHistory } from '@/components/patients/ById/FormClinicHistory'
 
 
 interface StateTypeof {
@@ -25,7 +24,6 @@ export const PatientById = () => {
   const { id } = useParams()
   const { execute } = usePost()
   const navigate = useNavigate()
-  const [viewingMedicalHistory, setViewingMedicalHistory] = useState(false)
   const [Data, setData] = useState<StateTypeof>({
     patient: null,
     clinicHistory: null,
@@ -85,24 +83,12 @@ export const PatientById = () => {
 
   return (
     <Layout>
-      {viewingMedicalHistory ? (
-        <FormClinicHistory
-          clinic={Data.clinicHistory}
-          idPatient={Data.patient?.id || 0}
-          updatePatient={updatePatient}
-          appointment={Data.appointment}
-          onBack={() => setViewingMedicalHistory(false)}
-          patient={Data.patient}
-        />
-      ) : (
-        <Patient
-          patient={Data.patient}
-          idPatient={Data.patient?.id || 0}
-          updatePatient={updatePatient}
-          onViewHistory={() => setViewingMedicalHistory(true)}
-          setClinicHistory={setClinicHistory}
-        />
-      )}
+      <Patient
+        patient={Data.patient}
+        idPatient={Data.patient?.id || 0}
+        updatePatient={updatePatient}
+        setClinicHistory={setClinicHistory}
+      />
     </Layout>
   )
 }

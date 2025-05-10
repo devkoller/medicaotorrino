@@ -17,6 +17,7 @@ import { TabAppointments } from './TabAppointments'
 import { PathologicalCard } from './PathologicalCard'
 import { NonPathologicalCard } from './NonPathologicalCard'
 import { FamilyCard } from './FamilyCard'
+import { FormClinicHistory } from "@/components/patients/ById/FormClinicHistory"
 import {
   Card,
   CardContent,
@@ -49,7 +50,6 @@ interface PatientProps {
   patient: PatientType | null
   idPatient: number
   updatePatient: () => void
-  onViewHistory: () => void
   setClinicHistory: (clinicHistory: AppointmentType | null) => void
 }
 
@@ -59,7 +59,7 @@ interface StateTypeof {
   dialogType: number
 }
 
-export const Patient = ({ patient, updatePatient, onViewHistory, setClinicHistory }: PatientProps) => {
+export const Patient = ({ patient, updatePatient, setClinicHistory }: PatientProps) => {
   const [openDialog, setOpenDialog] = useState(false)
   const navigate = useNavigate()
   const [Data, setData] = useState<StateTypeof>({
@@ -76,7 +76,6 @@ export const Patient = ({ patient, updatePatient, onViewHistory, setClinicHistor
       4: 'Dirección del paciente',
       5: 'Información personal',
     }
-    console.log(type);
 
     setData(prev => ({
       ...prev,
@@ -119,10 +118,12 @@ export const Patient = ({ patient, updatePatient, onViewHistory, setClinicHistor
 
         <CardContent>
           <Tabs defaultValue="personal" className="w-full">
+
             <TabsList className="grid w-full grid-cols-3">
               <TabsTrigger value="personal">Información personal</TabsTrigger>
-              <TabsTrigger value="appointments">Citas</TabsTrigger>
+              <TabsTrigger value="new">Generar historia clínica</TabsTrigger>
               <TabsTrigger value="medical">Historial medico</TabsTrigger>
+              {/* <TabsTrigger value="appointments">Citas</TabsTrigger> */}
             </TabsList>
 
             <TabsContent value="personal" className="pt-6">
@@ -130,8 +131,15 @@ export const Patient = ({ patient, updatePatient, onViewHistory, setClinicHistor
                 patient={patient}
                 handleDialog={handleDialog}
                 setOpenDialog={setOpenDialog}
-                onViewHistory={onViewHistory}
                 setClinicHistory={setClinicHistory}
+              />
+            </TabsContent>
+
+            <TabsContent value="new" className="pt-6">
+              <FormClinicHistory
+                idPatient={patient?.id || 0}
+                updatePatient={updatePatient}
+                patient={patient}
               />
             </TabsContent>
 
@@ -140,7 +148,6 @@ export const Patient = ({ patient, updatePatient, onViewHistory, setClinicHistor
                 patient={patient}
                 handleDialog={handleDialog}
                 setOpenDialog={setOpenDialog}
-                onViewHistory={onViewHistory}
                 setClinicHistory={setClinicHistory}
               />
             </TabsContent>

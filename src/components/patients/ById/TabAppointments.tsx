@@ -19,11 +19,10 @@ interface TabAppointmentsProps {
   patient: PatientType | null
   handleDialog: (index: number) => void
   setOpenDialog: (open: boolean) => void
-  onViewHistory: () => void
   setClinicHistory: (clinicHistory: AppointmentType) => void
 }
 
-export const TabAppointments = ({ patient, onViewHistory, setClinicHistory }: TabAppointmentsProps) => {
+export const TabAppointments = ({ patient, setClinicHistory }: TabAppointmentsProps) => {
   return (
     <div>
       <div className="flex justify-between items-center">
@@ -81,7 +80,6 @@ export const TabAppointments = ({ patient, onViewHistory, setClinicHistory }: Ta
                     onClick={() => {
                       // setSelectedAppointment(appointment)
                       // setIsAddNoteOpen(true)
-                      onViewHistory()
                       setClinicHistory(appointment)
                     }}
                   >

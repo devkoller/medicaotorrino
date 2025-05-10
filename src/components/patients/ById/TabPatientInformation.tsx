@@ -14,7 +14,6 @@ interface TabPatientInformationProps {
   patient: PatientType | null
   handleDialog: (index: number) => void
   setOpenDialog: (open: boolean) => void
-  onViewHistory: () => void
   setClinicHistory: (clinicHistory: AppointmentType | null) => void
 }
 
@@ -24,8 +23,6 @@ export const TabPatientInformation = ({
   patient,
   handleDialog,
   setOpenDialog,
-  onViewHistory,
-  setClinicHistory
 }: TabPatientInformationProps) => {
   return (
     <>
@@ -94,12 +91,6 @@ export const TabPatientInformation = ({
           handleDialog(4)
           setOpenDialog(true)
         }}>Editar dirección</Button>
-        <Button onClick={() => {
-          onViewHistory()
-          setClinicHistory(null)
-        }}>
-          Generar historia clínica
-        </Button>
       </div>
     </>
   )
