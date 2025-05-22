@@ -117,7 +117,7 @@ export const Patient = ({ patient, updatePatient, setClinicHistory }: PatientPro
         </CardHeader>
 
         <CardContent>
-          <Tabs defaultValue="medical" className="w-full">
+          <Tabs defaultValue="personal" className="w-full">
 
             <TabsList className="grid w-full grid-cols-3">
               <TabsTrigger value="personal">Información personal</TabsTrigger>

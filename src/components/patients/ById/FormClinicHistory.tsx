@@ -19,7 +19,6 @@ import {
   FileText,
   Pill,
   ClipboardList,
-  Save,
   CheckCircle2,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
@@ -801,9 +800,8 @@ export const FormClinicHistory = ({ clinic, idPatient, updatePatient, patient }:
                     })}
 
                     <div className="flex justify-end gap-3 pt-4">
-                      <Button type="button" variant="outline">
-                        <Save className="mr-2 h-4 w-4" />
-                        Save Draft
+                      <Button type="button" onClick={() => setActiveSection("medications")}>
+                        Regresa a medicamentos
                       </Button>
                       <Button type="submit">
                         <CheckCircle2 className="mr-2 h-4 w-4" />
