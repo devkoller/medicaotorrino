@@ -54,6 +54,7 @@ export interface PatientClinicType {
 	mc?: string
 	user?: UserType
 	medical_recipe?: MedicalRecipeType
+	files?: FilesType[]
 }
 
 export interface PatientFamilyHistoryType {
@@ -142,4 +143,13 @@ export interface AppointmentType {
 	doctorSpecialty?: string
 	statusLabel?: string
 	date?: string
+}
+
+export interface FilesType {
+	id: number
+	idPatient: number
+	idClinic: number
+	name?: string
+	type: string
+	link?: string
 }

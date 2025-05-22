@@ -29,7 +29,7 @@ export const FormInput = ({ control, label, name, description, type, placeholder
       control={control}
       name={name}
       render={({ field }) => (
-        <FormItem className="w-full">
+        <FormItem className="w-full space-y-4">
           {label && <>
             <FormLabel>{label}</FormLabel>{' '}
             {required && <sup className="text-red-500">*</sup>}

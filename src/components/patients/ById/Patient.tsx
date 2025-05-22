@@ -89,7 +89,7 @@ export const Patient = ({ patient, updatePatient, setClinicHistory }: PatientPro
         <Button variant="outline" onClick={() => {
           navigate('/admin-pacientes')
         }}>
-          Regresar a lista de usuarios
+          Regresar a lista de pacientes
         </Button>
       </div>
       <Card className="mb-6">
@@ -117,7 +117,7 @@ export const Patient = ({ patient, updatePatient, setClinicHistory }: PatientPro
         </CardHeader>
 
         <CardContent>
-          <Tabs defaultValue="personal" className="w-full">
+          <Tabs defaultValue="medical" className="w-full">
 
             <TabsList className="grid w-full grid-cols-3">
               <TabsTrigger value="personal">Información personal</TabsTrigger>
